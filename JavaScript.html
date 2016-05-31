@@ -1,0 +1,1203 @@
+<script>  // POOL SHEET PROGRAM SCRIPT
+    
+    //Init Global Vars
+    
+    //	Global Scaler Vars
+    var pageState;          // "PM"= Pool Selection Menu, "NP"= New Pool Input Form, "SF"= Set Pool Fencer List, "OP"= Opening An Existing Pool, "PS"= Active Pool Sheet Open 
+    var boutNum;
+    var curMatchNum;
+    var curLFNum;			//Current Left Fencer Number
+    var curRFNum;			//Current Right Fencer Number
+    var totalNumOfFencers;  // The Number of Fencers in the pool.
+    var curPoolID;
+    var curScoreTypeID;
+    var curTourneyID;
+    var DebugON = false;
+    
+    //	Global Array Vars
+    var pools;
+    var order;
+    var fencers;
+    var matches;
+    
+    // --------------------------------------------------------------------------------------- //
+    // ------------------------------ Global Variable Functions ------------------------------ //
+    // --------------------------------------------------------------------------------------- //
+    
+    // INITs the Global Array Var, order, for the number of Fencers in the Pool (using the first form).
+    function initOrder() 
+    {
+        switch(getNumOfFencers())
+        {
+        case 3:
+            order = [[1,2],[2,3],[1,3]];
+            break;
+        case 4:
+            order = [[1,4],[2,3],[1,3],[2,4],[3,4],[1,2]];
+            break;
+        case 5:
+            order = [[1,2],[3,4],[5,1],[2,3],[5,4],[1,3],[2,5],[4,1],[3,5],[4,2]];
+            break;
+        case 6:
+            order = [[1,2],[4,5],[2,3],[5,6],[3,1],[6,4],[2,5],[1,4],[5,3],[1,6],[4,2],[3,6],[5,1],[3,4],[6,2]];
+            break;
+        case 7:
+            order = [[1,4],[2,5],[3,6],[7,1],[5,4],[2,3],[6,7],[5,1],[4,3],[6,2],[5,7],[3,1],[4,6],[7,2],[3,5][1,6],[2,4],[7,3],[6,5],[1,2],[4,7]];
+            break;
+        case 8:
+            order = [[2,3],[1,5],[7,4],[6,8],[1,2],[3,4],[5,6],[8,7],[4,1],[5,2],[8,3],[6,7],[4,2],[8,1],[7,5],[3,6],[2,8],[5,4],[6,1],[3,7],[4,8],[2,6],[3,5],[1,7],[4,6],[8,5],[7,2],[1,3]];
+            break;
+        /* case 9:
+            order = [[,],[,],[,],[,],[,]];
+            break;
+        case 10:
+            order = [[,],[,],[,],[,],[,]];
+            break;
+        case 11:
+            order = [[,],[,],[,],[,],[,]];
+            break;
+        case 12:
+            order = [[,],[,],[,],[,],[,]];
+            break; */
+        }
+    }
+    
+    
+    // Gets the Global Var boutNum
+    function getOrder(i,j) 
+    {
+        return order[i][j];
+    }
+    // INITs the Global Var, boutNum with the number of Bouts in the Pool (using the first form).
+    function initNumOfFencers() 
+    {
+        totalNumOfFencers = parseInt(document.getElementById("cmboNum").value);
+    }
+    
+    
+    // INITs the Global Var, boutNum with the number of Bouts in the Pool (using the first form).
+    function setNumOfFencers(num) 
+    {
+        totalNumOfFencers = num;
+    }
+    
+    
+    // Gets the Global Var boutNum
+    function getNumOfFencers() 
+    {
+        return totalNumOfFencers;
+    }
+    
+    
+    // INITs the Global Var, boutNum with the number of Bouts in the Pool (using the first form).
+    function initBoutNum() 
+    {
+        boutNum = ((Math.pow((getNumOfFencers()),2)-(getNumOfFencers()))/2);
+    }
+    
+    
+    // Gets the Global Var boutNum
+    function getBoutNum() 
+    {
+        return boutNum;
+    }
+    
+    
+    // Sets the Current Pool's poolID
+    function setPoolID(pID)
+    {
+      curPoolID = pID;
+    }
+    
+    
+    // Gets the Current Pool's poolID
+    function getPoolID()
+    {
+      return curPoolID;
+    }
+    
+    
+    function getFencer(matchNum, position) 
+    {
+        return document.getElementById("nm"+getFencerNum(matchNum, position)).innerHTML;
+    }
+    
+    
+    function getFencerNum(matchNum, position) 
+    {
+        if (position == "L")
+        {
+            return getOrder((matchNum-1),0);
+        } else if (position == "R")
+        {
+            return getOrder((matchNum-1),1);
+        }
+        return "";
+    }
+    
+    
+    function getFencerScore(matchNum, position) 
+    {
+        if (position == "L")
+        {
+            return parseInt(document.getElementById("c"+getFencerNum(matchNum, "R")+"r"+getFencerNum(matchNum, "L")).innerHTML);
+        } else if (position == "R")
+        {
+            return parseInt(document.getElementById("c"+getFencerNum(matchNum, "L")+"r"+getFencerNum(matchNum, "R")).innerHTML);
+        }
+        return "";
+    }
+    
+
+
+
+
+
+
+
+
+
+
+
+// -------------------------------------------------- HTML Called Functions -------------------------------------------------- //
+    
+    
+    // ------------------------- Pool Menu Form ------------------------- //
+    // Calls GS to send Pool List Information on Page Load.
+    function loadPoolsMenu() 
+    {
+      google.script.run.withSuccessHandler(updatePoolMenu).loadPoolMenu();
+    }
+    
+    
+    // Calls GS to Open an existing pool sheet
+    function openPool(poolID)
+    {
+      displayLoadScreen(true);
+      google.script.run.withFailureHandler(onFailure).withSuccessHandler(setPage).getPoolInfo(poolID, "OP");
+    }
+    // --------------------------------------------------------------------------- //
+    
+    
+    
+    
+    // ------------------------- New Tournament Form ------------------------- //
+    // Displays the New Tournament Form Div
+    function newTourney()
+    {
+      displayLoadScreen(true);
+      setPage(["NT"]);
+    }
+    
+    
+    //*Asists the user in creating a the Tournament's URL
+    function tournamentNameChange()
+    {
+      var tourneyName = document.getElementById("TourneyNameTxt").value;
+      if (tourneyName == "")
+      {
+        document.getElementById("TourneyURLTxt").value = "";
+      } else
+      {
+        document.getElementById("TourneyURLTxt").value = tourneyName.replace(/[^\w]/g,"-");
+      }
+    }//*/
+    
+    
+    //*Asists the user in creating a the Tournament's URL
+    function cancelNewTourney()
+    {
+      showID("TourneyFormDiv", false);
+      document.getElementById("TourneyNameTxt").value = '';
+      document.getElementById("TourneyURLTxt").value = '';
+      document.getElementById("TourneyDisplayChkbx").checked = true;
+      showID("poolSelectionMenuDiv", true);
+    }//*/
+    
+    
+    //*Submits a New Tournament
+    function submitTourneyInfo()
+    {
+      displayLoadScreen(true);
+      var tInfo = [];
+      tInfo[0] = document.getElementById("TourneyNameTxt").value;
+      tInfo[1] = document.getElementById("TourneyURLTxt").value;
+      tInfo[2] = document.getElementById("TourneyDisplayChkbx").checked;
+      if (tInfo[1] != "")
+      {
+        tInfo[1] = tInfo[1].replace(/[^\w-_\/]+/g,"-");
+      }
+      //google.script.run.withFailureHandler(onFailure).withSuccessHandler(setPage).setTourneyInfo(tInfo); 
+      google.script.run.withFailureHandler(onFailure).setTourneyInfo(tInfo);
+      showID("TourneyFormDiv", false);
+      document.getElementById("TourneyNameTxt").value = '';
+      document.getElementById("TourneyURLTxt").value = '';
+      document.getElementById("TourneyDisplayChkbx").checked = true;
+      showID("poolSelectionMenuDiv", true);
+      displayLoadScreen(false);
+    }//*/
+    // --------------------------------------------------------------------------- //
+    
+    
+    
+    
+    // ------------------------- New Pool Form ------------------------- //
+    // Displays the New Pool Input Div
+    function newPool()
+    {
+      displayLoadScreen(true);
+      setPage(["NP"]);
+      google.script.run.withSuccessHandler(updateNewPoolLists).loadNewPoolLists();
+    }
+    
+    
+    //*Displays the New Pool Input Div
+    function tournamentChange()
+    {
+      var tID = document.getElementById("newPoolTourneyTxt").value;
+      var ti = document.getElementById("newPoolTourneyTxt").selectedIndex;
+      var ts = document.getElementById("newPoolTourneyTxt").options[ti].text;
+      //var tname = ts.replace(/^\s?(.*?)(?:, at ([\w-_\/]*))?\s?$/, "$1");
+      var turl = ts.replace(/^\s?(.*?)(?:, at ([\w-_\/]*))?\s?$/, "$2");
+      if (turl)
+      {
+        document.getElementById("newPoolRURLTxt").value = turl+"/";
+      } else
+      {
+        document.getElementById("newPoolRURLTxt").value = "";
+      }
+    }//*/
+    
+    
+    // Displays the Fencer's fields 
+    function updateFencerFields()
+    {
+      var fNum = document.getElementById("cmboNum").value;
+      showClass("FencerInfoFormItem", false);
+      for (var i = 1; i <= fNum; i++)
+      {
+        showID(("n"+i), true);
+      }
+      // Add Field Wipe to all fencer data?
+    }
+    
+    
+    // Displays the New Pool Input Div
+    function submitPoolInfo()
+    {
+      displayLoadScreen(true);
+      if (DebugON) google.script.run.GSlog("Submit Pool Info - Started", "JavaScript", "submitPoolInfo()");
+      // Collect New Pool's INFO From Form
+      var poolInfo = []; // add: document.getElementById("newPoolTURLTxt").value
+      poolInfo[0] = document.getElementById("newPoolTitleTxt").value;
+      poolInfo[1] = document.getElementById("newPoolStartDtTm").value;
+      poolInfo[2] = document.getElementById("newPoolRURLTxt").value;
+      poolInfo[3] = document.getElementById("newPoolTourneyTxt").value;
+      poolInfo[4] = document.getElementById("newPoolScoreTxt").value;
+      poolInfo[5] = document.getElementById("newPoolDblNumTxt").value;
+      poolInfo[6] = document.getElementById("cmboNum").value;
+      if (DebugON) google.script.run.GSlog("Submit Pool Info - INFO: "+poolInfo+"\n\n", "JavaScript", "submitPoolInfo()");
+      poolInfo[7] = [];
+      var fencers = document.getElementById("frmFencers").elements;
+      var i = 0;
+      for (var y = 0; y < poolInfo[6]; y++)
+      {
+        poolInfo[7][y] = [y+1, fencers[i].value, fencers[i+1].value, fencers[i+2].value, fencers[i+3].value, fencers[i+4].value];
+        i += 5;
+        if (DebugON) google.script.run.GSlog("Submit Pool Info - INFO: y="+y+"\n\ni="+i+"\n\nPoolInfo: "+poolInfo+"\n\n", "JavaScript", "submitPoolInfo()");
+      }
+      if (DebugON) google.script.run.GSlog("Submit Pool Info - INFO: "+poolInfo+"\n\n", "JavaScript", "submitPoolInfo()");
+      // Setup new pool's Info and send it back to setPoolInfo
+      google.script.run.withFailureHandler(onFailure).withSuccessHandler(setPage).setPoolInfo(poolInfo);
+      if (DebugON) google.script.run.GSlog("Submit Pool Info - Ended", "JavaScript", "submitPoolInfo()");
+    }
+    // --------------------------------------------------------------------------- //
+    
+    
+    
+    
+    // ------------------------- Pool Sheet ------------------------- //
+    // side=L,R,D sub=true, false
+    function point(side, sub, points)
+    {
+      displayLoadScreen(true);
+      var change = 1;
+      if (points) { change = parseInt(points); }
+      if (sub)    { change *= -1; }
+      document.getElementById('scoreChangeAmountTxt').value = 1;
+      switch (side)
+      {
+      case "L":
+        google.script.run.withSuccessHandler(setPage).updateMatchPoint(getPoolID(), curMatchNum, "L", parseInt(matches[curMatchNum-1][3])+change);
+        break;
+      case "R":
+        google.script.run.withSuccessHandler(setPage).updateMatchPoint(getPoolID(), curMatchNum, "R", '', parseInt(matches[curMatchNum-1][6])+change);
+        break;
+      case "D":
+        google.script.run.withSuccessHandler(setPage).updateMatchPoint(getPoolID(), curMatchNum, "D", parseInt(matches[curMatchNum-1][3])+change, parseInt(matches[curMatchNum-1][6])+change, parseInt(matches[curMatchNum-1][7])+change);
+        break;
+      }
+      
+      // Calls to update the Result Page for this Pool.
+      updateResults();
+    }
+    
+    
+    // Goes to the specified match
+    function goToMatch() 
+    {
+        navMatch("GOTO", document.getElementById("matchNavGTMNumTxt").value);
+        document.getElementById("matchNavGTMNumTxt").value = "";
+    }
+    
+    
+    // Sets Page to the specified Match in the pool (CALLED BY: submitNames() and goToMatch())
+    function navMatch(nav, num) 
+    {
+      var prevMatchNum = curMatchNum;
+      if ((nav == "NEXT") || (nav == "PREV") || (nav == "GOTO" && (parseInt(num, 10) > 0) && (parseInt(num, 10) <= (getBoutNum()))))
+      {
+        // Advances to the Next Match.
+        if (nav == "NEXT")
+        {
+          curMatchNum++;
+          if (curMatchNum > (getBoutNum())) { curMatchNum = 1; }
+        }
+        // Advances to the Previous Match. 
+        else if (nav == "PREV")
+        {
+          curMatchNum--;
+          if (curMatchNum == (0)) { curMatchNum = (getBoutNum()); }
+        } 
+        // Advances to a Specified Match Number's Match.
+        else if (nav == "GOTO")
+        {
+          curMatchNum = parseInt(num, 10);
+        }
+        pools[4] = curMatchNum;
+        if (DebugON) google.script.run.GSlog("Current Match 0");
+        // Sets the Match Scoring and Match Navigation Tables with the new matches values.
+        document.getElementById("curMatchNum").innerHTML = curMatchNum;
+        document.getElementById("matchNavCurNumDis").innerHTML = curMatchNum;
+        document.getElementById("curFencerLName").innerHTML = getFencer(curMatchNum, "L");
+        document.getElementById("curFencerRName").innerHTML = getFencer(curMatchNum, "R");
+        document.getElementById("curFencerLNum").innerHTML = getFencerNum(curMatchNum, "L");
+        document.getElementById("curFencerRNum").innerHTML = getFencerNum(curMatchNum, "R");
+        document.getElementById("curFencerLScore").innerHTML = getFencerScore(curMatchNum, "L");
+        document.getElementById("curFencerRScore").innerHTML = getFencerScore(curMatchNum, "R");
+        document.getElementById("mlR"+prevMatchNum+"C0").style.backgroundColor = "initial";
+        document.getElementById("mlR"+prevMatchNum+"C0").style.color = "white";
+        document.getElementById("mlR"+curMatchNum+"C0").style.backgroundColor = "Yellow";
+        document.getElementById("mlR"+curMatchNum+"C0").style.color = "Black";
+        // INITs a Temp Match Number to recieve the next matches information.
+        if (DebugON) google.script.run.GSlog("Current Match 1");
+        var matchNum = curMatchNum;
+        var next = [];
+        for (var i = 0; i < 2; i++)
+        {
+          if (matchNum == (getBoutNum())) { matchNum = 1; } 
+          else { matchNum++; }
+          next[i] = [getFencer(matchNum, "L"), getFencer(matchNum, "R")];
+        }
+        if (DebugON) google.script.run.GSlog("Current Match 2");
+        setHTMLtbl(document.getElementById("NextMatches"), next);
+        if (DebugON) google.script.run.GSlog("Current Match 3");
+        // Displays the Scoring, Navigation and Pool Tables.
+        document.getElementById("MatchPoolInfo").style.display = "block";
+        //{
+        if (DebugON) google.script.run.GSlog("Sets Current Match "+curMatchNum+" PoolID "+getPoolID());
+        google.script.run.setCurMatchNum(getPoolID(), curMatchNum);
+        //}
+        
+        // Calls to update the Result Page for this Pool.
+        updateResults();
+      } else
+      {
+        alert("ERROR: The match number provided was not found. Please enter a number between 1 and "+getBoutNum());
+      }
+    }
+    // --------------------------------------------------------------------------- //
+    
+    
+    
+    
+    // ------------------------- Edit Fencers Form ------------------------- //
+    // Allows user to edit specified fencer
+    function editFencerInfo(fNum) 
+    {
+      document.getElementById("fifNumber").innerHTML = fNum;
+      document.getElementById("fifHeadTxt").innerHTML = "<b>Fencer # "+fNum+" Information:</b>";
+      document.getElementById("fifClub").value = fencers[(fNum-1)][2];
+      document.getElementById("fifName").value = fencers[(fNum-1)][1];
+      document.getElementById("fifyc").value = fencers[(fNum-1)][3];
+      document.getElementById("fifrc").value = fencers[(fNum-1)][4];
+      document.getElementById("fifbc").value = fencers[(fNum-1)][5];
+      showID("poolSheetDiv", false);
+      showID("fencerInfoFormDiv", true);
+    }
+    
+    
+    // Completes the Fencer Info Form
+    function NavFencerInfo(nav) 
+    {
+      if (nav == "C")
+      {
+        showID("fencerInfoFormDiv", false);
+        showID("poolSheetDiv", true);
+      }
+      if (nav == "S")
+      {
+        var n = [];
+        n[0] = document.getElementById("fifNumber").innerHTML;
+        n[1] = document.getElementById("fifName").value;
+        n[2] = document.getElementById("fifClub").value;
+        n[3] = document.getElementById("fifyc").value;
+        n[4] = document.getElementById("fifrc").value;
+        n[5] = document.getElementById("fifbc").value;
+        fencers[(n[0]-1)] = n;
+        // --------------------------------------------------   Send update to GS Server and update page.
+        document.getElementById("nm"+n[0]).innerHTML = n[1];
+        document.getElementById("club"+n[0]).innerHTML = n[2];
+        document.getElementById("yc"+n[0]).innerHTML = n[3];
+        document.getElementById("rc"+n[0]).innerHTML = n[4];
+        document.getElementById("bc"+n[0]).innerHTML = n[5];
+        showID("fencerInfoFormDiv", false);
+        showID("poolSheetDiv", true);
+      }
+    }
+    // --------------------------------------------------------------------------- //
+    
+
+
+
+
+
+
+
+
+
+
+
+// -------------------------------------------------- GS Handler Functions -------------------------------------------------- //
+    
+    
+    //*Updates Pool Menu Table with the Pools from GS.
+    function updatePoolMenu(poolLst) 
+    {
+      var tblHeaders = '<tr id="poolMenuHRow0"><th id="poolMenuPoolHdr" colspan="3">Pool</th><th id="poolMenuTournHdr" colspan="3">Tournament</th></tr><tr id="poolMenuHRow1">'+
+        '<th id="poolMenuHR1C1" class="poolMenuHCol1">ID</th><th id="poolMenuHR1C2" class="poolMenuHCol2">Title</th><th id="poolMenuHR1C3" class="poolMenuHCol3">Start Date/Time</th>'+
+        '<th id="poolMenuHR1C4" class="poolMenuHCol4">?</th><th id="poolMenuHR1C5" class="poolMenuHCol5">ID</th><th id="poolMenuHR1C6" class="poolMenuHCol6">Name</th></tr>';
+      var tblRows = '';
+      for(var i = 1; i<=poolLst.length;i++)
+      {
+        tblRows += genPoolMenuRow(i, poolLst[i-1]);
+      }
+      document.getElementById("poolMenuTbl").innerHTML = tblHeaders+tblRows;
+      displayLoadScreen(false);
+    }//*/
+    
+    
+    //*Updates New Pool Lists with the Current information from GS.
+    function updateNewPoolLists(lsts) 
+    {
+      var tOptions = "";
+      for(var i in lsts[0])
+      {
+        tOptions += "<option value="+lsts[0][i][0]+">"+lsts[0][i][1]+((lsts[0][i][3])?", at "+lsts[0][i][3]:"")+"</option>";
+      }
+      document.getElementById("newPoolTourneyTxt").innerHTML = tOptions;
+      var sOptions = '';
+      for(var i in lsts[1])
+      {
+        sOptions += "<option value="+lsts[1][i][0]+">"+lsts[1][i][1]+": "+lsts[1][i][2]+"</option>";
+      }
+      document.getElementById("newPoolScoreTxt").innerHTML = sOptions;
+      displayLoadScreen(false);
+    }//*/
+    
+    
+    // Handler recieves an array of pool info from GS or local, and sets page variable and HTML
+    function setPage(list) 
+    {
+      //google.script.run.GSlog(formatReturnArray(list), "JavaScript", "setPage()");
+      if (DebugON) google.script.run.GSlog("Called:  "+list+"\n\n", "JavaScript", "setPage()");
+      pageState = list[0];
+      switch (pageState)
+      {
+      case "NT":
+        showID("poolSelectionMenuDiv", false);
+        showID("TourneyFormDiv", true);
+        break;
+      
+      case "NP":
+        showID("poolSelectionMenuDiv", false);
+        showID("newPoolFormDiv", true);
+        break;
+      
+      case "OP":
+        if (DebugON) google.script.run.GSlog("Seting Pool Sheet:\n\n"+list, "JavaScript", "setPage()");
+        pools = list[1];
+        setPoolID(pools[0]);
+        initPoolSheetHeader();
+        showID("currentMatchDblRow", (pools[8] > 0));
+        showClass("matchLstCol7", (pools[8] > 0));
+        if (DebugON) google.script.run.GSlog("Completed Pool Info", "JavaScript", "setPage()");
+        fencers = list[2];
+        setNumOfFencers(fencers.length);
+        initBoutNum();
+        initOrder();
+        if (DebugON) google.script.run.GSlog("Fencers Info - Part 1 Complete", "JavaScript", "setPage()");
+        showID("poolSelectionMenuDiv", false);
+        showID("newPoolFormDiv", false);
+        showID("poolSheetDiv", true);
+        if (DebugON) google.script.run.GSlog("Fencers Info - Part 2 Complete", "JavaScript", "setPage()");
+        // Loops through the Pool Table to remove un-needed cells for the number of Fencers in the pool.
+        for (var f = (getNumOfFencers()+1);f <= 8;f++)
+        {
+          deleteID("poolSheetTblrow"+f);
+          deleteClass("col"+f);
+        }
+        if (DebugON) google.script.run.GSlog("Completed Fencer Info", "JavaScript", "setPage()");
+        
+      case "PM":
+        setHTMLtbl(document.getElementById("poolSheetTable"), list[4]);
+        matches = list[3];
+        if (DebugON) google.script.run.GSlog("Matches Info - Part 1 Complete", "JavaScript", "setPage()");
+        setHTMLtbl(document.getElementById("matchLstTable"), matches);
+        if (DebugON) google.script.run.GSlog("Matches Info - Part 2 Complete", "JavaScript", "setPage()");
+        // Loops through the match numbers from the Match List, until all the matches for the pool are initialized and displayed.
+        for (var r = 0; r < 28; r++) 
+        {
+          if (r < getBoutNum())
+          {
+            curMatchNum = matches[r][0];
+            if ((matches[r][3] == matches[r][6]) || ((pools[8] > 0) && (pools[8] <= matches[r][7])))
+            {
+              setMLstVictoryColor("L", false);
+              setMLstVictoryColor("R", false);
+            } else
+            {
+              setMLstVictoryColor("L", (matches[r][3] > matches[r][6]));
+              setMLstVictoryColor("R", (matches[r][3] < matches[r][6]));
+            }
+          } else if (pageState == "OP")
+          {
+            deleteID("matchLstR"+(r+1));
+          }
+        }
+        if (DebugON) google.script.run.GSlog("Matches Info - Part 3 Complete", "JavaScript", "setPage()");
+        navMatch("GOTO", list[1][4]);
+        if (DebugON) google.script.run.GSlog("Completed Matches Info", "JavaScript", "setPage()");
+        pageState = "PM";
+        break;
+      }
+      displayLoadScreen(false);
+    }
+    
+    
+    //
+    function onFailure(error) 
+    {
+      var s = "";
+      for (var i in error)
+      {
+        s += error[i]+"\n"
+      }
+      displayLoadScreen(false);
+      alert("ERROR: "+error.name+" - "+error.message+"\n\nERROR INFO:\n    "+s+"\n\n");
+      google.script.run.GSlog("ERROR: " + error.message, "JavaScript", "onFailure(error)");
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+// -------------------------------------------------- Other Functions -------------------------------------------------- //
+    
+    
+    //*Creates and Returns Each Row's HTML with the pool Information
+    function genPoolMenuRow(rowNum, pool)
+    {
+      return '<tr id="poolMenuDRow'+rowNum+'" class= "poolMenuDRow" onclick="openPool(\''+pool[0]+'\')">'+
+      '<td id="poolMenuDR'+rowNum+'C1" class= "poolMenuDCol1">'+pool[0]+'</td>'+
+      '<td id="poolMenuDR'+rowNum+'C2" class= "poolMenuDCol2">'+pool[1]+'</td>'+
+      '<td id="poolMenuDR'+rowNum+'C3" class= "poolMenuDCol3">'+pool[2]+'</td>'+
+      '<td id="poolMenuDR'+rowNum+'C4" class= "poolMenuDCol4">'+pool[3]+'</td>'+
+      '<td id="poolMenuDR'+rowNum+'C5" class= "poolMenuDCol5">'+pool[4]+'</td>'+
+      '<td id="poolMenuDR'+rowNum+'C6" class= "poolMenuDCol6">'+pool[5]+'</td></tr>';
+    }//*/
+    
+    
+    // INITs the Pool Sheet Header.
+    function initPoolSheetHeader() 
+    {
+      var dt = new Date(pools[2]);
+      var e = document.getElementById("poolSheetHeaderInfo").getElementsByTagName("*");
+      e[2].innerHTML = 'Pool ID: '+pools[0];
+      e[3].innerHTML = 'Pool Title: '+pools[1];
+      e[4].innerHTML = 'Tournament: '+pools[10];
+      if (DebugON) google.script.run.GSlog("TEST   "+formatDate(dt, "weekday, m/d/y")+"\n"+formatTime(dt));
+      e[5].innerHTML = 'Pool Starting On: '+formatDate(dt, "weekday, m/d/y")+' at '+formatTime(dt);
+      if (DebugON) google.script.run.GSlog("TEST");
+      if (pools[6])
+      {
+        var hDiv = getEid("poolSheetHeaderInfo").innerHTML;
+        var pageNames = pools[6].split("/");
+        if (pageNames[0] == "test" || pageNames[0] == "Test") getEid("poolSheetHeaderInfo").innerHTML = "<a href='https://sites.google.com/site/musketeerfencingclubtest1/results/"+pools[6].slice(5)+"' style='text-decoration:none;'>"+hDiv+"</a>";
+        else getEid("poolSheetHeaderInfo").innerHTML = "<a href='http://www.musketeerfencingclub.com/"+pools[6]+"' style='text-decoration:none;'>"+hDiv+"</a>";
+      }
+    }
+    
+    
+    //*
+    function showDoubles(show)
+    {
+      var e = document.getElementsByClassName("matchLstCol7");
+      for (var i in e)
+      {
+        if (show)
+        {
+          e[i].style.display = "initial";
+        } else
+        {
+          e[i].style.display = "none";
+        }
+      }
+    }//*/
+    
+    
+    // Sets Color for match victory
+    function setMLstVictoryColor(fencerSide, winning) 
+    {
+        if (fencerSide == "L")
+        {
+            if (winning)
+            {   // Sets Left Fencer of the current match to Green in the Match List.
+                document.getElementById("mlR"+curMatchNum+"C1").style.backgroundColor = "LightGreen";
+                document.getElementById("mlR"+curMatchNum+"C2").style.backgroundColor = "LightGreen";
+                document.getElementById("mlR"+curMatchNum+"C3").style.backgroundColor = "LightGreen";
+                document.getElementById("mlR"+curMatchNum+"C1").style.color = "DarkGreen";
+                document.getElementById("mlR"+curMatchNum+"C2").style.color = "DarkGreen";
+                document.getElementById("mlR"+curMatchNum+"C3").style.color = "DarkGreen";
+            }
+            else
+            {   // Sets Left Fencer of the current match to Normal in the Match List.
+                document.getElementById("mlR"+curMatchNum+"C1").style.backgroundColor = "initial";
+                document.getElementById("mlR"+curMatchNum+"C2").style.backgroundColor = "initial";
+                document.getElementById("mlR"+curMatchNum+"C3").style.backgroundColor = "initial";
+                document.getElementById("mlR"+curMatchNum+"C1").style.color = "white";
+                document.getElementById("mlR"+curMatchNum+"C2").style.color = "white";
+                document.getElementById("mlR"+curMatchNum+"C3").style.color = "white";
+            }
+        } 
+        else if (fencerSide == "R")
+        {
+            if (winning)
+            {   // Sets Right Fencer of the current match to Green in the Match List.
+                document.getElementById("mlR"+curMatchNum+"C4").style.backgroundColor = "LightGreen";
+                document.getElementById("mlR"+curMatchNum+"C5").style.backgroundColor = "LightGreen";
+                document.getElementById("mlR"+curMatchNum+"C6").style.backgroundColor = "LightGreen";
+                document.getElementById("mlR"+curMatchNum+"C4").style.color = "DarkGreen";
+                document.getElementById("mlR"+curMatchNum+"C5").style.color = "DarkGreen";
+                document.getElementById("mlR"+curMatchNum+"C6").style.color = "DarkGreen";
+            }
+            else
+            {   // Sets Right Fencer of the current match to Normal in the Match List.
+                document.getElementById("mlR"+curMatchNum+"C4").style.backgroundColor = "initial";
+                document.getElementById("mlR"+curMatchNum+"C5").style.backgroundColor = "initial";
+                document.getElementById("mlR"+curMatchNum+"C6").style.backgroundColor = "initial";
+                document.getElementById("mlR"+curMatchNum+"C4").style.color = "white";
+                document.getElementById("mlR"+curMatchNum+"C5").style.color = "white";
+                document.getElementById("mlR"+curMatchNum+"C6").style.color = "white";
+            }
+        }
+        else
+        {   // Log error in GS
+            google.script.run.GSlog("Error: setMLstVictoryColor(fencerSide: "+fencerSide+", "+winning+")\n    Bad fencerSide Argument .", "'JavaScript.html", "setMLstVictoryColor("+fencerSide+", "+winning+")");
+        }
+    }
+    
+    
+    function updateResults()  // Incomplete ??????????????????????????????
+    {//*
+      var titles = [];
+      if (pools[10] == "None")
+      {
+        titles[0] = pools[1];
+      } else
+      {
+        titles[0] = pools[10];
+        titles[1] = pools[1];
+      }
+      if (pools[6])
+      {
+        google.script.run.withFailureHandler(onFailure).updateResults(
+          document.getElementById("poolSheetHeaderInfo").innerHTML+
+          '<br><br>'+
+          document.getElementById("poolSheetTbl").innerHTML+
+          '<br><hr><br>'+
+          document.getElementById("NextMatchesDiv").innerHTML+
+          '<br><hr><br>'+
+          document.getElementById("matchLst").innerHTML, pools[6], true, titles);
+      }  //*/
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+// -------------------------------------------------- Generic HTML Functions -------------------------------------------------- //
+    
+    
+    // For a specified element ID, this will show or hide the element.
+    function getEid(eId)
+    {
+      if (DebugON) google.script.run.GSlog("Starting", "JavaScript", "getEid("+eId+")");
+      return document.getElementById(eId);
+      if (DebugON) google.script.run.GSlog("Ending", "JavaScript", "getEid("+eId+")");
+    }
+    
+    
+    // For a specified element ID, this will show or hide the element.
+    function showID(eId, show)
+    {
+      if (DebugON) google.script.run.GSlog("Starting", "JavaScript", "showID("+eId+", "+show+")");
+      showE(getEid(eId), show);
+      if (DebugON) google.script.run.GSlog("Ending", "JavaScript", "showID("+eId+", "+show+")");
+    }
+    
+    
+    // For a specified element ID, this will show or hide the element.
+    function getEclass(eClass)
+    {
+      if (DebugON) google.script.run.GSlog("Starting", "JavaScript", "getEid("+eClass+")");
+      return document.getElementsByClassName(eClass);
+      if (DebugON) google.script.run.GSlog("Ending", "JavaScript", "getEid("+eClass+")");
+    }
+    
+    
+    // For a specified class, this will show or hide all the elements in that class.
+    function showClass(eClass, show)
+    {
+      if (DebugON) google.script.run.GSlog("Starting", "JavaScript", "showClass("+eClass+", "+show+")");
+      var e = getEclass(eClass);
+      for (var i = 0; i < e.length; i++)
+      {
+        if (isElement(e[i]))
+        {
+          showE(e[i], show);
+        }
+      }
+      if (DebugON) google.script.run.GSlog("Ending", "JavaScript", "showClass("+eClass+", "+show+")");
+    }
+    
+    
+    // This will show or hide a given element.
+    function showE(e, show)
+    {
+      if (DebugON) google.script.run.GSlog("Starting", "JavaScript", "showE("+e+", "+show+")");
+      if (e || e.style)
+      {
+      var t = e.tagName;
+      if (t != undefined)
+      {
+        //var d = e.style.display;
+        if (show)
+        {
+          switch (t)
+          {
+          case "TABLE":
+          case "table":
+            e.style.display = "table";
+            break;
+          case "TBODY":
+          case "tbody":
+            e.style.display = "table-row-group";
+            break;
+          case "TR":
+          case "tr":
+            e.style.display = "table-row";
+            break;
+          case "TH":
+          case "TD":
+          case "th":
+          case "td":
+            e.style.display = "table-cell";
+            break;
+          case "LI":
+          case "li":
+            e.style.display = "list-item";
+            break;
+          default:
+            e.style.display = "block";
+          }
+        } else
+        {
+          e.style.display = "none";
+        }
+      }
+      if (DebugON) google.script.run.GSlog("Ending: "+t+"        "+e.style.display, "JavaScript", "showE("+e+", "+show+")");
+      }
+    }
+    
+    
+    // For a specified class, this will show or hide all the elements in that class.
+    function deleteClass(eClass)
+    {
+      if (DebugON) google.script.run.GSlog("Starting", "JavaScript", "deleteClass("+eClass+")");
+      var e = document.getElementsByClassName(eClass);
+      for (var i = 0; i< e.length; i)
+      {
+        if (isElement(e[i]))
+        {
+          deleteE(e[i]);
+        }
+      }
+      if (DebugON) google.script.run.GSlog("Ending", "JavaScript", "deleteClass("+eClass+")");
+    }
+    
+    
+    // For a specified element ID, this will show or hide the element.
+    function deleteID(eId)
+    {
+      if (DebugON) google.script.run.GSlog("Starting", "JavaScript", "deleteID("+eId+")");
+      deleteE(document.getElementById(eId));
+      if (DebugON) google.script.run.GSlog("Ending", "JavaScript", "deleteID("+eId+")");
+    }
+    
+    
+    // This will delete a given element.
+    function deleteE(e)
+    {
+      if (DebugON) google.script.run.GSlog("Starting", "JavaScript", "deleteE("+e+")");
+      var p = e.parentElement
+      p.removeChild(e);
+      if (DebugON) google.script.run.GSlog("Ending: "+e+"        "+p, "JavaScript", "deleteE("+e+")");
+    }
+    
+    
+    // LOADING Screen
+    function displayLoadScreen(display) 
+    {
+      showID("LoadingScreen", display);
+    }
+    
+    
+    // Returns Information about the given element.
+    function prtfEstr(e, long, html)
+    {
+      if (long)
+      {
+        if (html)
+        {
+          return '<b>Element Information</b><br>Element Tag: '+e.tagName+'<br>ID: '+e.id+'<br>Class: '+e.className+'<br>Title: '+e.title+
+            '<br>Tab Index: '+e.tabIndex+'<br>Text Contenct: '+e.textContent+'<br>Element To String: '+e+
+            '<br><b>Node Information</b><br>Node Name: '+e.nodeName+'<br>Node Type: '+e.nodeType+'<br>Node Value: '+e.nodeValue+
+            '<br><b>Parent Information</b><br>Parent Tag: '+e.parentElement.tagName+'<br>Parent ID: '+e.parentElement.id+
+            '<br>Parent Class: '+e.parentElement.className+'<br>Parent To String: '+e.parentElement;
+        } else
+        {
+          return 'Element Information\nElement Tag: '+e.tagName+'\nID: '+e.id+'\nClass: '+e.className+'\nTitle: '+e.title+
+            '\nTab Index: '+e.tabIndex+'\nText Contenct: '+e.textContent+'\nElement To String: '+e+
+            '\n<b>Node Information</b>\nNode Name: '+e.nodeName+'\nNode Type: '+e.nodeType+'\nNode Value: '+e.nodeValue+
+            '\n<b>Parent Information</b>\nParent Tag: '+e.parentElement.tagName+'\nParent ID: '+e.parentElement.id+
+            '\nParent Class: '+e.parentElement.className+'\nParent To String: '+e.parentElement;
+        }
+      } else
+      {
+        if (html)
+        {
+          return '<b>Element Information</b><br>Element Tag: '+e.tagName+'<br>ID: '+e.id+'<br>Class: '+e.className+'<br>Title: '+e.title+
+            '<br>Tab Index: '+e.tabIndex+'<br>Text Contenct: '+e.textContent+'<br>Element To String: '+e;
+        } else
+        {
+          return 'Element Information\nElement Tag: '+e.tagName+'\nID: '+e.id+'\nClass: '+e.className+'\nTitle: '+e.title+
+            '\nTab Index: '+e.tabIndex+'\nText Contenct: '+e.textContent+'\nElement To String: '+e;
+        }
+      }
+    }
+    
+    
+    //                  e = table element, t= table array
+    function getHTMLtbl(e)
+    {
+      var t = [];
+      var ir = 0;
+      var tr = e.getElementsByTagName("tr");
+      for (var i in tr)
+      {
+        var dr = tr[i].getElementsByTagName("td");
+        if (dr.length > 0)
+        {
+          t[ir] = [];
+          for (var j = 0; j < dr.length; j++)
+          {
+            t[ir][j] = dr[j].innerHTML;
+          }
+          ir++;
+        }
+      }
+      return t;
+    }
+    
+    
+    //                  e = table element, t= table array
+    function setHTMLtbl(e, t)
+    {
+      if (DebugON) google.script.run.GSlog("Started", "JavaScript", "setHTMLtbl()");
+      var ir = 0;
+      var tr = e.getElementsByTagName("tr");
+      for (var i = 0; i < tr.length; i++)
+      {
+        if (t[ir])
+        {
+          var dr = tr[i].getElementsByTagName("td");
+          if (dr.length > 0)
+          {
+            for (var j = 0; j < dr.length; j++)
+            {
+              if (DebugON) google.script.run.GSlog("Row"+ir+"\nCol"+j+"\nt"+t[ir][j]+"\ndr.length "+dr.length, "JavaScript", "setHTMLtbl()");
+              if ((t[ir][j] || (t[ir][j] == 0)) && isElement(dr[j]))
+              {
+                dr[j].innerHTML = t[ir][j];
+              }
+            }
+            ir++;
+          }
+        } else
+        {
+          break;
+        }
+      }
+      if (DebugON) google.script.run.GSlog("Ended", "JavaScript", "setHTMLtbl()");
+    }
+    
+    
+    // The Following Function was found here: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+    // Posted by mcmlxxxiii, on 5/13/2013
+    // Returns true if it is a DOM node
+    function isNode(o)
+    {
+      return (typeof Node === "object" ? o instanceof Node : o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName==="string");
+    }
+    
+    
+    // The Following Function was found here: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+    // Posted by mcmlxxxiii, on 5/13/2013
+    //Returns true if it is a DOM HTML Element    
+    function isElement(o)
+    {
+      return (typeof HTMLElement === "object" ? o instanceof HTMLElement : o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string");
+    }
+    
+    
+    // --------------------------------------------------DATE Format
+    function formatDate(dt, format) 
+    {
+      var m = dt.getMonth();
+      var d = dt.getDate();
+      var y = dt.getFullYear();
+      switch (format)
+      {
+      case "wd. mon. d, y":
+        return (getDateValueStr(dt.getDay(), "Weekday")+", "+getDateValueStr(m, "Month")+" "+d+", "+y);
+      case "weekday, month d, y":
+        return (getDateValueStr(dt.getDay(), "Weekday", true)+", "+getDateValueStr(m, "Month", true)+" "+d+", "+y);
+      case "wd. mon. dd, y":
+        return (getDateValueStr(dt.getDay(), "Weekday")+", "+getDateValueStr(m, "Month")+" "+((d < 10)?('0'+d):d)+", "+y);
+      case "weekday, month dd, y":
+        return (getDateValueStr(dt.getDay(), "Weekday", true)+", "+getDateValueStr(m, "Month", true)+" "+((d < 10)?('0'+d):d)+", "+y);
+      
+      case "mon. d, y":
+        return (getDateValueStr(m, "Month")+". "+d+", "+y);
+      case "month d, y":
+        return (getDateValueStr(m, "Month", true)+" "+d+", "+y);
+      case "mon. dd, y":
+        return (getDateValueStr(m, "Month")+". "+((d < 10)?('0'+d):d)+", "+y);
+      case "month dd, y":
+        return (getDateValueStr(m, "Month", true)+" "+((d < 10)?('0'+d):d)+", "+y);
+        
+      case "weekday, m/d/y":
+        return (getDateValueStr(dt.getDay(), "Weekday", true)+", "+(m+1)+"/"+d+"/"+y);
+      case "weekday, m-d-y":
+        return (getDateValueStr(dt.getDay(), "Weekday", true)+", "+(m+1)+"-"+d+"-"+y);
+      case "weekday, m/dd/y":
+        return (getDateValueStr(dt.getDay(), "Weekday", true)+", "+(m+1)+"/"+((d < 10)?('0'+d):d)+"/"+y);
+      case "weekday, m-dd-y":
+        return (getDateValueStr(dt.getDay(), "Weekday", true)+", "+(m+1)+"-"+((d < 10)?('0'+d):d)+"-"+y);
+      case "weekday, mm/dd/y":
+        return (getDateValueStr(dt.getDay(), "Weekday", true)+", "+(((m+1) < 10)?('0'+(m+1)):(m+1))+"/"+((d < 10)?('0'+d):d)+"/"+y);
+      case "weekday, mm-dd-y":
+        return (getDateValueStr(dt.getDay(), "Weekday", true)+", "+(((m+1) < 10)?('0'+(m+1)):(m+1))+"-"+((d < 10)?('0'+d):d)+"-"+y);
+        
+      case "wd. m/d/y":
+        return (getDateValueStr(dt.getDay(), "Weekday")+", "+(m+1)+"/"+d+"/"+y);
+      case "wd. m-d-y":
+        return (getDateValueStr(dt.getDay(), "Weekday")+", "+(m+1)+"-"+d+"-"+y);
+      case "wd. m/dd/y":
+        return (getDateValueStr(dt.getDay(), "Weekday")+", "+(m+1)+"/"+((d < 10)?('0'+d):d)+"/"+y);
+      case "wd. m-dd-y":
+        return (getDateValueStr(dt.getDay(), "Weekday")+", "+(m+1)+"-"+((d < 10)?('0'+d):d)+"-"+y);
+      case "wd. mm/dd/y":
+        return (getDateValueStr(dt.getDay(), "Weekday")+", "+(((m+1) < 10)?('0'+(m+1)):(m+1))+"/"+((d < 10)?('0'+d):d)+"/"+y);
+      case "wd. mm-dd-y":
+        return (getDateValueStr(dt.getDay(), "Weekday")+", "+(((m+1) < 10)?('0'+(m+1)):(m+1))+"-"+((d < 10)?('0'+d):d)+"-"+y);
+        
+      case "m-d-y":
+        return ((m+1)+"-"+d+"-"+y);
+      case "m-dd-y":
+        return ((m+1)+"-"+((d < 10)?('0'+d):d)+"-"+y);
+      case "mm-dd-y":
+        return ((((m+1) < 10)?('0'+(m+1)):(m+1))+"-"+((d < 10)?('0'+d):d)+"-"+y);
+      case "m/d/y":
+        return ((m+1)+"/"+d+"/"+y);
+      case "m/dd/y":
+        return ((m+1)+"/"+((d < 10)?('0'+d):d)+"/"+y);
+      case "mm/dd/y":
+        return ((((m+1) < 10)?('0'+(m+1)):(m+1))+"/"+((d < 10)?('0'+d):d)+"/"+y);
+      default:
+        return ((((m+1) < 10)?('0'+(m+1)):(m+1))+"/"+((d < 10)?('0'+d):d)+"/"+y);
+      }
+    }
+    
+    // --------------------------------------------------TIME format
+    function formatTime(dt) 
+    {
+      var hr = dt.getHours();
+      var min = dt.getMinutes();
+      var ampm = ((hr >= 12)?'PM':'AM');
+      hr = ((hr%12)? (hr%12) : 12);
+      min = ((min < 10)?('0'+min):min);
+      return (hr+":"+min+" "+getDateValueStr(dt.getHours(), "AM/PM", true));
+    }
+    
+    // --------------------------------------------------Date Value String
+    function getDateValueStr(value, type, long, adjusted)
+    {
+      if (adjusted)
+      {
+        value -= 1;
+      }
+      switch (type)
+      {
+      case "Weekday":
+        switch (value)
+        {
+        case 0:
+          return ((long)?"Sunday":"Sun");
+        case 1:
+          return ((long)?"Monday":"Mon");
+        case 2:
+          return ((long)?"Tuesday":"Tue");
+        case 3:
+          return ((long)?"Wednesday":"Wed");
+        case 4:
+          return ((long)?"Thursday":"Thur");
+        case 5:
+          return ((long)?"Friday":"Fri");
+        case  6:
+          return ((long)?"Saturday":"Sat");
+        }
+      case "Month":
+        switch (value)
+        {
+        case 0:
+          return ((long)?"January":"Jan");
+        case 1:
+          return ((long)?"February":"Feb");
+        case 2:
+          return ((long)?"March":"Mar");
+        case 3:
+          return ((long)?"April":"Apr");
+        case 4:
+          return ((long)?"May":"May");
+        case 5:
+          return ((long)?"June":"Jun");
+        case 6:
+          return ((long)?"July":"Jul");
+        case 7:
+          return ((long)?"August":"Aug");
+        case 8:
+          return ((long)?"September":"Sep");
+        case 9:
+          return ((long)?"October":"Oct");
+        case 10:
+          return ((long)?"November":"Nov");
+        case 11:
+          return ((long)?"December":"Dec");
+        }
+      case "AM/PM":
+        return ((value >= 12)?'PM':((long)?'AM':''));
+      }
+    }
+    
+    // --------------------------------------------------TIME format
+    function formatReturnArray(a) 
+    {
+      var s = "";
+      for (var i in a)
+      {
+        if (a[i].isArray())
+        {
+          for (var j in a[i])
+          {
+            if (a[i][j].isArray())
+            {
+              for (var k in a[i][j])
+              {
+                s += "        "+a[i][j][k]+"\n";
+              }
+            } else
+            {
+              s += "    "+a[i][j]+"\n";
+            }
+          }
+        } else
+        {
+          s += a[i]+"\n";
+        }
+      }
+      return s;
+    }
+    
+    // --------------------------------------------------------------------------------------- //
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</script>
+
+
