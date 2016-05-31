@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body onload="loadPoolsMenu()">
+    <?!= include('StyleSheet'); ?>
+    
+    <div id="mainDiv">
+    
+    
+    <!-- ---------------------------------------------------------------- Loading Screen HTML ---------------------------------------------------------------- -->
+    <div id="LoadingScreen" style="position: fixed;background: rgb(20,20,20);width: 100%;height: 100%;top: 0;left: 0;">
+      <img style="display: block; margin-left: auto; margin-right: auto; margin-top: 10%;" src="https://bb286b1a-a-62cb3a1a-s-sites.googlegroups.com/site/musketeerfencingclubtest1/administrator/adminwebimages/Loading.gif?attachauth=ANoY7crC3e8-mT74pzZxOg4ksh99sdrCsYvB3OO-e1T7ZJGapu0ddc3Ph3DxeUF2KXFseZfAzplgvJFroJO8QQ1n3BEh5DwUJg8xnWCrXzzkMlkxETeH6hxmeM5Am69aWrKMY6_xZl3jwVyFqn4M_ubSY99VEzuyUCqbU5canzrBEC0XLeGBIXJjNn3gN3RZCHWclVCLhoJDBcGJiB0rE6VSBqWwEi4UW2_q4pCqRW92EcAZZnnI9em10lJyHdDp30EsJrQHDo15jy0y9jWWPk3A-IelJjYgmA%3D%3D&attredirects=0">
+    </div>
+    
+    
+    
+    
+    <!-- ---------------------------------------------------------------- Pool Menu HTML ---------------------------------------------------------------- -->
+    <div id="poolMenuDiv">
+      <div id="poolSelectionMenuDiv">
+        <p id="poolMenuInfo">Please select a pool below, click 'New Tournament' to create a new tournament or click 'New Pool' to create a new pool.</p>
+        <button id="newPoolBtn" onclick="newPool()">New Pool</button>
+        <button id="newTourneyBtn" onclick="newTourney()">New Tournament</button>
+        <br>
+        <br>
+        <table id="poolMenuTbl">
+          <tr id="poolMenuHRow0">
+            <th id="poolMenuPoolHdr" colspan="3">Pool</th>
+            <th id="poolMenuTournHdr" colspan="3">Tournament</th>
+          </tr>
+          <tr id="poolMenuHRow1">
+            <th id="poolMenuHR1C1" class="poolMenuHCol1">ID</th>
+            <th id="poolMenuHR1C2" class="poolMenuHCol2">Title</th>
+            <th id="poolMenuHR1C3" class="poolMenuHCol3">Start Date/Time</th>
+            <th id="poolMenuHR1C4" class="poolMenuHCol4">?</th>
+            <th id="poolMenuHR1C5" class="poolMenuHCol5">ID</th>
+            <th id="poolMenuHR1C6" class="poolMenuHCol6">Name</th>
+          </tr>
+          <tr id="poolMenuDRow1">
+            <td id="poolMenuDR1C1" class= "poolMenuDCol1">Loading...</td>
+            <td id="poolMenuDR1C2" class= "poolMenuDCol2">Loading...</td>
+            <td id="poolMenuDR1C3" class= "poolMenuDCol3">Loading...</td>
+            <td id="poolMenuDR1C4" class= "poolMenuDCol4">Loading...</td>
+            <td id="poolMenuDR1C5" class= "poolMenuDCol5">Loading...</td>
+            <td id="poolMenuDR1C6" class= "poolMenuDCol6">Loading...</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    
+    
+    
+    
+    <!-- ---------------------------------------------------------------- New Tournament Form HTML ---------------------------------------------------------------- -->
+    <div id="TourneyFormDiv">
+      <div id="TourneyNameDiv">
+        <label id="TourneyNameLab">Name of the Tourney: </label>
+        <input type="text" id="TourneyNameTxt" name="TourneyNameTxt" oninput="tournamentNameChange()"><br>
+      </div><br>
+      <div id="TourneyTURLDiv">
+        <label id="TourneyURLLab">URL for the Tournament Page: </label><br>
+        <label id="TourneyURLLab2">http://www.musketeerfencingclub.com/</label><input type="text" id="TourneyURLTxt" name="TourneyTURLTxt"><br>
+      </div><br>
+      <div id="TourneyDisplayDiv">
+        <label id="TourneyDisplayLab">Display this tournament as an option, when creating new pools: </label><input type="checkbox" id="TourneyDisplayChkbx" name="TourneyDisplayChkbx" checked>
+      </div><br>
+      <br><br>
+      <button id="TourneyFormCancelBtn" onclick="cancelNewTourney()">Cancel</button>
+      <button id="TourneyFormSubmitBtn" onclick="submitTourneyInfo()">Submit</button>
+    </div>
+    
+    
+    
+    
+    <!-- ---------------------------------------------------------------- New Pool Form HTML ---------------------------------------------------------------- -->
+    <div id="newPoolFormDiv">
+      
+      
+      <div id="newPoolInputDiv">
+        <div id="newPoolTitleDiv">
+          <label id="newPoolTitleLab">Title of the Pool: </label>
+          <input type="text" id="newPoolTitleTxt" name="newPoolTitleTxt"><br>
+        </div><br>
+        <div id="newPoolStartDiv">
+          <label id="newPoolStartLab">Start Date and Time of the Pool: </label>
+          <input type="datetime-local" id="newPoolStartDtTm" name="newPoolStartDtTm"><br>
+        </div><br>
+        
+        <div id="newPoolTourneyDiv">
+          <label id="newPoolTourneyLab">Name of the Tournament (Select "None" if no tournament): </label>
+          <select id="newPoolTourneyTxt" name="newPoolTourneyTxt" onChange="tournamentChange()" value=0>
+            <option value=0>None</option>
+          </select>
+          <!--<input type="text" id="newPoolTourneyTxt" name="newPoolTourneyTxt" list="tournamentsDataList" oninput="tournamentChange()">
+          <datalist id="tournamentsDataList">
+            <option value="Loading ..."></option>
+          </datalist>--><br>
+        </div><br>
+        <!--<div id="newPoolTURLDiv">
+          <label id="newPoolTURLLab">URL for the Tournament Page: </label><br>
+          <label id="newPoolTURLLab2">http://www.musketeerfencingclub.com/</label><input type="text" id="newPoolTURLTxt" name="newPoolTURLTxt" oninput="tournamentURLChange()"><br>
+        </div><br>-->
+        
+        <div id="newPoolRURLDiv">
+          <label id="newPoolRURLLab">URL for the Result Page: </label><br>
+          <label id="newPoolRURLLab2">http://www.musketeerfencingclub.com/</label><input type="text" id="newPoolRURLTxt" name="newPoolRURLTxt"><br>
+        </div><br>
+        <div id="newPoolScoreDiv">
+          <label id="newPoolScoreLab">Select Scoring Type: </label>
+          <select id="newPoolScoreTxt" name="newPoolScoreTxt" value=0>
+            <option value=1>Standard</option>
+            <option value=2>Touches Recieved</option>
+            <option value=3>Touches Scored</option>
+          </select><br>
+        </div><br>
+        <div id="newPoolDblNumDiv">
+          <label id="newPoolDblNumLab">Match Double Touch Limit (0 = no limit): </label><br>
+          <input type="number" id="newPoolDblNumTxt" name="newPoolDblNumTxt" min="0" value=0><br>
+        </div><br>
+      </div>
+      
+      
+      <div id="newPoolFencersDiv">
+        <label id="comboBoxNum">Select the number of fencers in the pool: </label>
+        <select id="cmboNum" onchange="updateFencerFields()">
+        <option value=8>8</option>
+        <option value=7>7</option>
+        <option value=6>6</option>
+        <option value=5>5</option>
+        <option value=4>4</option>
+        <option value=3>3</option>
+        </select>
+        <br><br>
+        
+        <form id="frmFencers">
+            <div id="n1" class="FencerInfoFormItem">
+              <p><b>Fencer # 1 Information:</b></p>
+              <label id="nameLab1">Name of Fencer: </label>
+              <input type="text" id="name1" name="name1"><br>
+              <label id="fClubLab1">Club: </label>
+              <input type="text" id="fClub1" name="fClub1"><br>
+              <div id="fencer1InfoFormCards1">
+                <p>Penalty Cards:</p>
+                <label id="fycLab1">Yellow Cards:</label>
+                <input type="number" id="fyc1" name="fyc1" min="0" max="100" value=0><br>
+                <label id="frcLab1">Red Cards:</label>
+                <input type="number" id="frc1" name="frc1" min="0" max="100" value=0><br>
+                <label id="fbcLab1">Black Cards:</label>
+                <input type="number" id="fbc1" name="fbc1" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n2" class="FencerInfoFormItem">
+              <p><b>Fencer # 2 Information:</b></p>
+              <label id="nameLab2">Name of Fencer: </label>
+              <input type="text" id="name2" name="name2"><br>
+              <label id="fClubLab2">Club: </label>
+              <input type="text" id="fClub2" name="fClub2"><br>
+              <div id="fencer1InfoFormCards2">
+                <p>Penalty Cards:</p>
+                <label id="fycLab2">Yellow Cards:</label>
+                <input type="number" id="fyc2" name="fyc2" min="0" max="100" value=0><br>
+                <label id="frcLab2">Red Cards:</label>
+                <input type="number" id="frc2" name="frc2" min="0" max="100" value=0><br>
+                <label id="fbcLab2">Black Cards:</label>
+                <input type="number" id="fbc2" name="fbc2" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n3" class="FencerInfoFormItem">
+              <p><b>Fencer # 3 Information:</b></p>
+              <label id="nameLab3">Name of Fencer: </label>
+              <input type="text" id="name3" name="name3"><br>
+              <label id="fClubLab3">Club: </label>
+              <input type="text" id="fClub3" name="fClub3"><br>
+              <div id="fencer1InfoFormCards3">
+                <p>Penalty Cards:</p>
+                <label id="fycLab3">Yellow Cards:</label>
+                <input type="number" id="fyc3" name="fyc3" min="0" max="100" value=0><br>
+                <label id="frcLab3">Red Cards:</label>
+                <input type="number" id="frc3" name="frc3" min="0" max="100" value=0><br>
+                <label id="fbcLab3">Black Cards:</label>
+                <input type="number" id="fbc3" name="fbc3" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n4" class="FencerInfoFormItem">
+              <p><b>Fencer # 4 Information:</b></p>
+              <label id="nameLab4">Name of Fencer: </label>
+              <input type="text" id="name4" name="name4"><br>
+              <label id="fClubLab4">Club: </label>
+              <input type="text" id="fClub4" name="fClub4"><br>
+              <div id="fencer1InfoFormCards4">
+                <p>Penalty Cards:</p>
+                <label id="fycLab4">Yellow Cards:</label>
+                <input type="number" id="fyc4" name="fyc4" min="0" max="100" value=0><br>
+                <label id="frcLab4">Red Cards:</label>
+                <input type="number" id="frc4" name="frc4" min="0" max="100" value=0><br>
+                <label id="fbcLab4">Black Cards:</label>
+                <input type="number" id="fbc4" name="fbc4" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n5" class="FencerInfoFormItem">
+              <p><b>Fencer # 5 Information:</b></p>
+              <label id="nameLab5">Name of Fencer: </label>
+              <input type="text" id="name5" name="name5"><br>
+              <label id="fClubLab5">Club: </label>
+              <input type="text" id="fClub5" name="fClub5"><br>
+              <div id="fencer1InfoFormCards5">
+                <p>Penalty Cards:</p>
+                <label id="fycLab5">Yellow Cards:</label>
+                <input type="number" id="fyc5" name="fyc5" min="0" max="100" value=0><br>
+                <label id="frcLab5">Red Cards:</label>
+                <input type="number" id="frc5" name="frc5" min="0" max="100" value=0><br>
+                <label id="fbcLab5">Black Cards:</label>
+                <input type="number" id="fbc5" name="fbc5" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n6" class="FencerInfoFormItem">
+              <p><b>Fencer # 6 Information:</b></p>
+              <label id="nameLab6">Name of Fencer: </label>
+              <input type="text" id="name6" name="name6"><br>
+              <label id="fClubLab6">Club: </label>
+              <input type="text" id="fClub6" name="fClub6"><br>
+              <div id="fencer1InfoFormCards6">
+                <p>Penalty Cards:</p>
+                <label id="fycLab6">Yellow Cards:</label>
+                <input type="number" id="fyc6" name="fyc6" min="0" max="100" value=0><br>
+                <label id="frcLab6">Red Cards:</label>
+                <input type="number" id="frc6" name="frc6" min="0" max="100" value=0><br>
+                <label id="fbcLab6">Black Cards:</label>
+                <input type="number" id="fbc6" name="fbc6" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n7" class="FencerInfoFormItem">
+              <p><b>Fencer # 7 Information:</b></p>
+              <label id="nameLab7">Name of Fencer: </label>
+              <input type="text" id="name7" name="name7"><br>
+              <label id="fClubLab7">Club: </label>
+              <input type="text" id="fClub7" name="fClub7"><br>
+              <div id="fencer1InfoFormCards7">
+                <p>Penalty Cards:</p>
+                <label id="fycLab7">Yellow Cards:</label>
+                <input type="number" id="fyc7" name="fyc7" min="0" max="100" value=0><br>
+                <label id="frcLab7">Red Cards:</label>
+                <input type="number" id="frc7" name="frc7" min="0" max="100" value=0><br>
+                <label id="fbcLab7">Black Cards:</label>
+                <input type="number" id="fbc7" name="fbc7" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n8" class="FencerInfoFormItem">
+              <p><b>Fencer # 8 Information:</b></p>
+              <label id="nameLab8">Name of Fencer: </label>
+              <input type="text" id="name8" name="name8"><br>
+              <label id="fClubLab8">Club: </label>
+              <input type="text" id="fClub8" name="fClub8"><br>
+              <div id="fencer1InfoFormCards8">
+                <p>Penalty Cards:</p>
+                <label id="fycLab8">Yellow Cards:</label>
+                <input type="number" id="fyc8" name="fyc8" min="0" max="100" value=0><br>
+                <label id="frcLab8">Red Cards:</label>
+                <input type="number" id="frc8" name="frc8" min="0" max="100" value=0><br>
+                <label id="fbcLab8">Black Cards:</label>
+                <input type="number" id="fbc8" name="fbc8" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <!--
+            <div id="n9" class="FencerInfoFormItem">
+              <p><b>Fencer # 9 Information:</b></p>
+              <label id="nameLab9">Name of Fencer: </label>
+              <input type="text" id="name9" name="name9"><br>
+              <label id="fClubLab9">Club: </label>
+              <input type="text" id="fClub9" name="fClub9"><br>
+              <div id="fencer1InfoFormCards9">
+                <p>Penalty Cards:</p>
+                <label id="fycLab9">Yellow Cards:</label>
+                <input type="number" id="fyc9" name="fyc9" min="0" max="100" value=0><br>
+                <label id="frcLab9">Red Cards:</label>
+                <input type="number" id="frc9" name="frc9" min="0" max="100" value=0><br>
+                <label id="fbcLab9">Black Cards:</label>
+                <input type="number" id="fbc9" name="fbc9" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n10" class="FencerInfoFormItem">
+              <p><b>Fencer # 10 Information:</b></p>
+              <label id="nameLab10">Name of Fencer: </label>
+              <input type="text" id="name10" name="name10"><br>
+              <label id="fClubLab10">Club: </label>
+              <input type="text" id="fClub10" name="fClub10"><br>
+              <div id="fencer1InfoFormCards10">
+                <p>Penalty Cards:</p>
+                <label id="fycLab10">Yellow Cards:</label>
+                <input type="number" id="fyc10" name="fyc10" min="0" max="100" value=0><br>
+                <label id="frcLab10">Red Cards:</label>
+                <input type="number" id="frc10" name="frc10" min="0" max="100" value=0><br>
+                <label id="fbcLab10">Black Cards:</label>
+                <input type="number" id="fbc10" name="fbc10" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n11" class="FencerInfoFormItem">
+              <p><b>Fencer # 11 Information:</b></p>
+              <label id="nameLab11">Name of Fencer: </label>
+              <input type="text" id="name11" name="name11"><br>
+              <label id="fClubLab11">Club: </label>
+              <input type="text" id="fClub11" name="fClub11"><br>
+              <div id="fencer1InfoFormCards11">
+                <p>Penalty Cards:</p>
+                <label id="fycLab11">Yellow Cards:</label>
+                <input type="number" id="fyc11" name="fyc11" min="0" max="100" value=0><br>
+                <label id="frcLab11">Red Cards:</label>
+                <input type="number" id="frc11" name="frc11" min="0" max="100" value=0><br>
+                <label id="fbcLab11">Black Cards:</label>
+                <input type="number" id="fbc11" name="fbc11" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            <div id="n12" class="FencerInfoFormItem">
+              <p><b>Fencer # 12 Information:</b></p>
+              <label id="nameLab12">Name of Fencer: </label>
+              <input type="text" id="name12" name="name12"><br>
+              <label id="fClubLab12">Club: </label>
+              <input type="text" id="fClub12" name="fClub12"><br>
+              <div id="fencer1InfoFormCards12">
+                <p>Penalty Cards:</p>
+                <label id="fycLab12">Yellow Cards:</label>
+                <input type="number" id="fyc12" name="fyc12" min="0" max="100" value=0><br>
+                <label id="frcLab12">Red Cards:</label>
+                <input type="number" id="frc12" name="frc12" min="0" max="100" value=0><br>
+                <label id="fbcLab12">Black Cards:</label>
+                <input type="number" id="fbc12" name="fbc12" min="0" max="100" value=0><br>
+              </div>
+            </div>
+            -->
+            <br>
+            <br>
+        </form>
+        <button id="submit" onclick="submitPoolInfo()">Submit</button>
+      </div>
+    </div>
+    
+    
+    
+    <!-- ---------------------------------------------------------------- Pool Sheet HTML ---------------------------------------------------------------- -->
+    <div id="poolSheetDiv">
+      <div id="MatchPoolInfo">
+        <div id="poolSheetHeaderInfo">
+          <div id="PSheaderPoolBox" class="PSheaderBoxDiv" style="border:7px ridge Crimson;background-color:rgb(235,160,170);color:Black;width:43%;display:block;padding:1%;float:none;min-width:95%;overflow:auto;margin:auto;height:auto">
+            <p id="PSheaderPoolMFC" class="PSheaderTitleTxt" style="font:italic bold 300%/100% 'Book Antiqua','Times New Roman',Serif;color:rgb(0,0,205);margin:0px 0px;display:inline">Musketeer Fencing Club</p>
+            <p id="PSheaderPoolID" class="PSheaderSubTxt" style="font:italic bold 125%/100% 'Book Antiqua','Times New Roman',Serif;color:rgb(0,0,205);margin-top:10px;margin-bottom:0px">Pool ID: </p>
+            <p id="PSheaderPoolTitle" class="PSheaderSubTxt" style="font:italic bold 125%/100% 'Book Antiqua','Times New Roman',Serif;color:rgb(0,0,205);margin-top:10px;margin-bottom:0px">Pool Title: </p>
+            <p id="PSheaderPoolTourney" class="PSheaderSubTxt" style="font:italic bold 125%/100% 'Book Antiqua','Times New Roman',Serif;color:rgb(0,0,205);margin-top:10px;margin-bottom:0px">Tournament: </p>
+            <p id="PSheaderPoolStart" class="PSheaderSubTxt" style="font:italic bold 125%/100% 'Book Antiqua','Times New Roman',Serif;color:rgb(0,0,205);margin-top:10px;margin-bottom:0px">Pool Starting On: 2/20/2016 at 11:00 AM.</p>
+          </div>
+          <hr>
+        </div>
+          <div id="poolSheetTbl">
+              <table id="poolSheetTable">
+                  <tr class="rowHeader">
+                      <th class="FencerClub">Club</th>
+                      <th class="FencerNames">Fencer Names</th>
+                      <th class="FencerCards" colspan="3">Cards</th>
+                      <th class="col0">#</th>
+                      <th class="col1">1</th>
+                      <th class="col2">2</th>
+                      <th class="col3">3</th>
+                      <th class="col4">4</th>
+                      <th class="col5">5</th>
+                      <th class="col6">6</th>
+                      <th class="col7">7</th>
+                      <th class="col8">8</th>
+                      <th class="VIC">V</th>
+                      <th class="TS">TS</th>
+                      <th class="TR">TR</th>
+                      <th class="IND">IND</th>
+                      <th class="PLACE">PLACE</th>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow1" onClick="editFencerInfo(1)">
+                      <td id="club1" class="FencerClub"></td>
+                      <td id="nm1" class="FencerNames"></td>
+                      <td id="yc1" class="yellowCards">0</td>
+                      <td id="rc1" class="redCards">0</td>
+                      <td id="bc1" class="blackCards">0</td>
+                      <th class="numHeader">1</th>
+                      <td id="c1r1" class="col1" style="background-color:Black"></td>
+                      <td id="c2r1" class="col2">0</td>
+                      <td id="c3r1" class="col3">0</td>
+                      <td id="c4r1" class="col4">0</td>
+                      <td id="c5r1" class="col5">0</td>
+                      <td id="c6r1" class="col6">0</td>
+                      <td id="c7r1" class="col7">0</td>
+                      <td id="c8r1" class="col8">0</td>
+                      <td id="1VIC" class="VIC">0</td>
+                      <td id="1TS" class="TS">0</td>
+                      <td id="1TR" class="TR">0</td>
+                      <td id="1IND" class="IND">0</td>
+                      <td id="1PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow2" onClick="editFencerInfo(2)">
+                      <td id="club2" class="FencerClub"></td>
+                      <td id="nm2" class="FencerNames"></td>
+                      <td id="yc2" class="yellowCards">0</td>
+                      <td id="rc2" class="redCards">0</td>
+                      <td id="bc2" class="blackCards">0</td>
+                      <th class="numHeader">2</th>
+                      <td id="c1r2" class="col1">0</td>
+                      <td id="c2r2" class="col2" style="background-color:Black"></td>
+                      <td id="c3r2" class="col3">0</td>
+                      <td id="c4r2" class="col4">0</td>
+                      <td id="c5r2" class="col5">0</td>
+                      <td id="c6r2" class="col6">0</td>
+                      <td id="c7r2" class="col7">0</td>
+                      <td id="c8r2" class="col8">0</td>
+                      <td id="2VIC" class="VIC">0</td>
+                      <td id="2TS" class="TS">0</td>
+                      <td id="2TR" class="TR">0</td>
+                      <td id="2IND" class="IND">0</td>
+                      <td id="2PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow3" onClick="editFencerInfo(3)">
+                      <td id="club3" class="FencerClub"></td>
+                      <td id="nm3" class="FencerNames"></td>
+                      <td id="yc3" class="yellowCards">0</td>
+                      <td id="rc3" class="redCards">0</td>
+                      <td id="bc3" class="blackCards">0</td>
+                      <th class="numHeader">3</th>
+                      <td id="c1r3" class="col1">0</td>
+                      <td id="c2r3" class="col2">0</td>
+                      <td id="c3r3" class="col3" style="background-color:Black"></td>
+                      <td id="c4r3" class="col4">0</td>
+                      <td id="c5r3" class="col5">0</td>
+                      <td id="c6r3" class="col6">0</td>
+                      <td id="c7r3" class="col7">0</td>
+                      <td id="c8r3" class="col8">0</td>
+                      <td id="3VIC" class="VIC">0</td>
+                      <td id="3TS" class="TS">0</td>
+                      <td id="3TR" class="TR">0</td>
+                      <td id="3IND" class="IND">0</td>
+                      <td id="3PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow4" onClick="editFencerInfo(4)">
+                      <td id="club4" class="FencerClub"></td>
+                      <td id="nm4" class="FencerNames"></td>
+                      <td id="yc4" class="yellowCards">0</td>
+                      <td id="rc4" class="redCards">0</td>
+                      <td id="bc4" class="blackCards">0</td>
+                      <th class="numHeader">4</th>
+                      <td id="c1r4" class="col1">0</td>
+                      <td id="c2r4" class="col2">0</td>
+                      <td id="c3r4" class="col3">0</td>
+                      <td id="c4r4" class="col4" style="background-color:Black;"></td>
+                      <td id="c5r4" class="col5">0</td>
+                      <td id="c6r4" class="col6">0</td>
+                      <td id="c7r4" class="col7">0</td>
+                      <td id="c8r4" class="col8">0</td>
+                      <td id="4VIC" class="VIC">0</td>
+                      <td id="4TS" class="TS">0</td>
+                      <td id="4TR" class="TR">0</td>
+                      <td id="4IND" class="IND">0</td>
+                      <td id="4PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow5" onClick="editFencerInfo(5)">
+                      <td id="club5" class="FencerClub"></td>
+                      <td id="nm5" class="FencerNames"></td>
+                      <td id="yc5" class="yellowCards">0</td>
+                      <td id="rc5" class="redCards">0</td>
+                      <td id="bc5" class="blackCards">0</td>
+                      <th class="numHeader">5</th>
+                      <td id="c1r5" class="col1">0</td>
+                      <td id="c2r5" class="col2">0</td>
+                      <td id="c3r5" class="col3">0</td>
+                      <td id="c4r5" class="col4">0</td>
+                      <td id="c5r5" class="col5" style="background-color:Black;"></td>
+                      <td id="c6r5" class="col6">0</td>
+                      <td id="c7r5" class="col7">0</td>
+                      <td id="c8r5" class="col8">0</td>
+                      <td id="5VIC" class="VIC">0</td>
+                      <td id="5TS" class="TS">0</td>
+                      <td id="5TR" class="TR">0</td>
+                      <td id="5IND" class="IND">0</td>
+                      <td id="5PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow6" onClick="editFencerInfo(6)">
+                      <td id="club6" class="FencerClub"></td>
+                      <td id="nm6" class="FencerNames"></td>
+                      <td id="yc6" class="yellowCards">0</td>
+                      <td id="rc6" class="redCards">0</td>
+                      <td id="bc6" class="blackCards">0</td>
+                      <th class="numHeader">6</th>
+                      <td id="c1r6" class="col1">0</td>
+                      <td id="c2r6" class="col2">0</td>
+                      <td id="c3r6" class="col3">0</td>
+                      <td id="c4r6" class="col4">0</td>
+                      <td id="c5r6" class="col5">0</td>
+                      <td id="c6r6" class="col6" style="background-color:Black;"></td>
+                      <td id="c7r6" class="col7">0</td>
+                      <td id="c8r6" class="col8">0</td>
+                      <td id="6VIC" class="VIC">0</td>
+                      <td id="6TS" class="TS">0</td>
+                      <td id="6TR" class="TR">0</td>
+                      <td id="6IND" class="IND">0</td>
+                      <td id="6PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow7" onClick="editFencerInfo(7)">
+                      <td id="club7" class="FencerClub"></td>
+                      <td id="nm7" class="FencerNames"></td>
+                      <td id="yc7" class="yellowCards">0</td>
+                      <td id="rc7" class="redCards">0</td>
+                      <td id="bc7" class="blackCards">0</td>
+                      <th class="numHeader">7</th>
+                      <td id="c1r7" class="col1">0</td>
+                      <td id="c2r7" class="col2">0</td>
+                      <td id="c3r7" class="col3">0</td>
+                      <td id="c4r7" class="col4">0</td>
+                      <td id="c5r7" class="col5">0</td>
+                      <td id="c6r7" class="col6">0</td>
+                      <td id="c7r7" class="col7" style="background-color:Black;"></td>
+                      <td id="c8r7" class="col8">0</td>
+                      <td id="7VIC" class="VIC">0</td>
+                      <td id="7TS" class="TS">0</td>
+                      <td id="7TR" class="TR">0</td>
+                      <td id="7IND" class="IND">0</td>
+                      <td id="7PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow8" onClick="editFencerInfo(8)">
+                      <td id="club8" class="FencerClub"></td>
+                      <td id="nm8" class="FencerNames"></td>
+                      <td id="yc8" class="yellowCards">0</td>
+                      <td id="rc8" class="redCards">0</td>
+                      <td id="bc8" class="blackCards">0</td>
+                      <th class="numHeader">8</th>
+                      <td id="c1r8" class="col1">0</td>
+                      <td id="c2r8" class="col2">0</td>
+                      <td id="c3r8" class="col3">0</td>
+                      <td id="c4r8" class="col4">0</td>
+                      <td id="c5r8" class="col5">0</td>
+                      <td id="c6r8" class="col6">0</td>
+                      <td id="c7r8" class="col7">0</td>
+                      <td id="c8r8" class="col8" style="background-color:Black;"></td>
+                      <td id="8VIC" class="VIC">0</td>
+                      <td id="8TS" class="TS">0</td>
+                      <td id="8TR" class="TR">0</td>
+                      <td id="8IND" class="IND">0</td>
+                      <td id="8PLACE" class="PLACE"></td>
+                  </tr>
+                  <!-- 
+                  <tr class="rowHeader">
+                      <th class="FencerClub">Club</th>
+                      <th class="FencerNames">Fencer Names</th>
+                      <th class="FencerCards" colspan="3">Cards</th>
+                      <th class="col0">#</th>
+                      <th class="col1">1</th>
+                      <th class="col2">2</th>
+                      <th class="col3">3</th>
+                      <th class="col4">4</th>
+                      <th class="col5">5</th>
+                      <th class="col6">6</th>
+                      <th class="col7">7</th>
+                      <th class="col8">8</th>
+                      <th class="col9">9</th>
+                      <th class="col10">10</th>
+                      <th class="col11">11</th>
+                      <th class="col12">12</th>
+                      <th class="VIC">V</th>
+                      <th class="TS">TS</th>
+                      <th class="TR">TR</th>
+                      <th class="IND">IND</th>
+                      <th class="PLACE">PLACE</th>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow1" onClick="editFencerInfo(1)">
+                      <td id="club1" class="FencerClub"></td>
+                      <td id="nm1" class="FencerNames"></td>
+                      <td id="yc1" class="yellowCards">0</td>
+                      <td id="rc1" class="redCards">0</td>
+                      <td id="bc1" class="blackCards">0</td>
+                      <th class="numHeader">1</th>
+                      <td id="c1r1" class="col1" style="background-color:Black"></td>
+                      <td id="c2r1" class="col2">0</td>
+                      <td id="c3r1" class="col3">0</td>
+                      <td id="c4r1" class="col4">0</td>
+                      <td id="c5r1" class="col5">0</td>
+                      <td id="c6r1" class="col6">0</td>
+                      <td id="c7r1" class="col7">0</td>
+                      <td id="c8r1" class="col8">0</td>
+                      <td id="c9r1" class="col9">0</td>
+                      <td id="c10r1" class="col10">0</td>
+                      <td id="c11r1" class="col11">0</td>
+                      <td id="c12r1" class="col12">0</td>
+                      <td id="1VIC" class="VIC">0</td>
+                      <td id="1TS" class="TS">0</td>
+                      <td id="1TR" class="TR">0</td>
+                      <td id="1IND" class="IND">0</td>
+                      <td id="1PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow2" onClick="editFencerInfo(2)">
+                      <td id="club2" class="FencerClub"></td>
+                      <td id="nm2" class="FencerNames"></td>
+                      <td id="yc2" class="yellowCards">0</td>
+                      <td id="rc2" class="redCards">0</td>
+                      <td id="bc2" class="blackCards">0</td>
+                      <th class="numHeader">2</th>
+                      <td id="c1r2" class="col1">0</td>
+                      <td id="c2r2" class="col2" style="background-color:Black"></td>
+                      <td id="c3r2" class="col3">0</td>
+                      <td id="c4r2" class="col4">0</td>
+                      <td id="c5r2" class="col5">0</td>
+                      <td id="c6r2" class="col6">0</td>
+                      <td id="c7r2" class="col7">0</td>
+                      <td id="c8r2" class="col8">0</td>
+                      <td id="c9r2" class="col9">0</td>
+                      <td id="c10r2" class="col10">0</td>
+                      <td id="c11r2" class="col11">0</td>
+                      <td id="c12r2" class="col12">0</td>
+                      <td id="2VIC" class="VIC">0</td>
+                      <td id="2TS" class="TS">0</td>
+                      <td id="2TR" class="TR">0</td>
+                      <td id="2IND" class="IND">0</td>
+                      <td id="2PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow3" onClick="editFencerInfo(3)">
+                      <td id="club3" class="FencerClub"></td>
+                      <td id="nm3" class="FencerNames"></td>
+                      <td id="yc3" class="yellowCards">0</td>
+                      <td id="rc3" class="redCards">0</td>
+                      <td id="bc3" class="blackCards">0</td>
+                      <th class="numHeader">3</th>
+                      <td id="c1r3" class="col1">0</td>
+                      <td id="c2r3" class="col2">0</td>
+                      <td id="c3r3" class="col3" style="background-color:Black"></td>
+                      <td id="c4r3" class="col4">0</td>
+                      <td id="c5r3" class="col5">0</td>
+                      <td id="c6r3" class="col6">0</td>
+                      <td id="c7r3" class="col7">0</td>
+                      <td id="c8r3" class="col8">0</td>
+                      <td id="c9r3" class="col9">0</td>
+                      <td id="c10r3" class="col10">0</td>
+                      <td id="c11r3" class="col11">0</td>
+                      <td id="c12r3" class="col12">0</td>
+                      <td id="3VIC" class="VIC">0</td>
+                      <td id="3TS" class="TS">0</td>
+                      <td id="3TR" class="TR">0</td>
+                      <td id="3IND" class="IND">0</td>
+                      <td id="3PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow4" onClick="editFencerInfo(4)">
+                      <td id="club4" class="FencerClub"></td>
+                      <td id="nm4" class="FencerNames"></td>
+                      <td id="yc4" class="yellowCards">0</td>
+                      <td id="rc4" class="redCards">0</td>
+                      <td id="bc4" class="blackCards">0</td>
+                      <th class="numHeader">4</th>
+                      <td id="c1r4" class="col1">0</td>
+                      <td id="c2r4" class="col2">0</td>
+                      <td id="c3r4" class="col3">0</td>
+                      <td id="c4r4" class="col4" style="background-color:Black"></td>
+                      <td id="c5r4" class="col5">0</td>
+                      <td id="c6r4" class="col6">0</td>
+                      <td id="c7r4" class="col7">0</td>
+                      <td id="c8r4" class="col8">0</td>
+                      <td id="c9r4" class="col9">0</td>
+                      <td id="c10r4" class="col10">0</td>
+                      <td id="c11r4" class="col11">0</td>
+                      <td id="c12r4" class="col12">0</td>
+                      <td id="4VIC" class="VIC">0</td>
+                      <td id="4TS" class="TS">0</td>
+                      <td id="4TR" class="TR">0</td>
+                      <td id="4IND" class="IND">0</td>
+                      <td id="4PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow5" onClick="editFencerInfo(5)">
+                      <td id="club5" class="FencerClub"></td>
+                      <td id="nm5" class="FencerNames"></td>
+                      <td id="yc5" class="yellowCards">0</td>
+                      <td id="rc5" class="redCards">0</td>
+                      <td id="bc5" class="blackCards">0</td>
+                      <th class="numHeader">5</th>
+                      <td id="c1r5" class="col1">0</td>
+                      <td id="c2r5" class="col2">0</td>
+                      <td id="c3r5" class="col3">0</td>
+                      <td id="c4r5" class="col4">0</td>
+                      <td id="c5r5" class="col5" style="background-color:Black"></td>
+                      <td id="c6r5" class="col6">0</td>
+                      <td id="c7r5" class="col7">0</td>
+                      <td id="c8r5" class="col8">0</td>
+                      <td id="c9r5" class="col9">0</td>
+                      <td id="c10r5" class="col10">0</td>
+                      <td id="c11r5" class="col11">0</td>
+                      <td id="c12r5" class="col12">0</td>
+                      <td id="5VIC" class="VIC">0</td>
+                      <td id="5TS" class="TS">0</td>
+                      <td id="5TR" class="TR">0</td>
+                      <td id="5IND" class="IND">0</td>
+                      <td id="5PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow6" onClick="editFencerInfo(6)">
+                      <td id="club6" class="FencerClub"></td>
+                      <td id="nm6" class="FencerNames"></td>
+                      <td id="yc6" class="yellowCards">0</td>
+                      <td id="rc6" class="redCards">0</td>
+                      <td id="bc6" class="blackCards">0</td>
+                      <th class="numHeader">6</th>
+                      <td id="c1r6" class="col1">0</td>
+                      <td id="c2r6" class="col2">0</td>
+                      <td id="c3r6" class="col3">0</td>
+                      <td id="c4r6" class="col4">0</td>
+                      <td id="c5r6" class="col5">0</td>
+                      <td id="c6r6" class="col6" style="background-color:Black"></td>
+                      <td id="c7r6" class="col7">0</td>
+                      <td id="c8r6" class="col8">0</td>
+                      <td id="c9r6" class="col9">0</td>
+                      <td id="c10r6" class="col10">0</td>
+                      <td id="c11r6" class="col11">0</td>
+                      <td id="c12r6" class="col12">0</td>
+                      <td id="6VIC" class="VIC">0</td>
+                      <td id="6TS" class="TS">0</td>
+                      <td id="6TR" class="TR">0</td>
+                      <td id="6IND" class="IND">0</td>
+                      <td id="6PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow7" onClick="editFencerInfo(7)">
+                      <td id="club7" class="FencerClub"></td>
+                      <td id="nm7" class="FencerNames"></td>
+                      <td id="yc7" class="yellowCards">0</td>
+                      <td id="rc7" class="redCards">0</td>
+                      <td id="bc7" class="blackCards">0</td>
+                      <th class="numHeader">7</th>
+                      <td id="c1r7" class="col1">0</td>
+                      <td id="c2r7" class="col2">0</td>
+                      <td id="c3r7" class="col3">0</td>
+                      <td id="c4r7" class="col4">0</td>
+                      <td id="c5r7" class="col5">0</td>
+                      <td id="c6r7" class="col6">0</td>
+                      <td id="c7r7" class="col7" style="background-color:Black"></td>
+                      <td id="c8r7" class="col8">0</td>
+                      <td id="c9r7" class="col9">0</td>
+                      <td id="c10r7" class="col10">0</td>
+                      <td id="c11r7" class="col11">0</td>
+                      <td id="c12r7" class="col12">0</td>
+                      <td id="7VIC" class="VIC">0</td>
+                      <td id="7TS" class="TS">0</td>
+                      <td id="7TR" class="TR">0</td>
+                      <td id="7IND" class="IND">0</td>
+                      <td id="7PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow8" onClick="editFencerInfo(8)">
+                      <td id="club8" class="FencerClub"></td>
+                      <td id="nm8" class="FencerNames"></td>
+                      <td id="yc8" class="yellowCards">0</td>
+                      <td id="rc8" class="redCards">0</td>
+                      <td id="bc8" class="blackCards">0</td>
+                      <th class="numHeader">8</th>
+                      <td id="c1r8" class="col1">0</td>
+                      <td id="c2r8" class="col2">0</td>
+                      <td id="c3r8" class="col3">0</td>
+                      <td id="c4r8" class="col4">0</td>
+                      <td id="c5r8" class="col5">0</td>
+                      <td id="c6r8" class="col6">0</td>
+                      <td id="c7r8" class="col7">0</td>
+                      <td id="c8r8" class="col8" style="background-color:Black"></td>
+                      <td id="c9r8" class="col9">0</td>
+                      <td id="c10r8" class="col10">0</td>
+                      <td id="c11r8" class="col11">0</td>
+                      <td id="c12r8" class="col12">0</td>
+                      <td id="8VIC" class="VIC">0</td>
+                      <td id="8TS" class="TS">0</td>
+                      <td id="8TR" class="TR">0</td>
+                      <td id="8IND" class="IND">0</td>
+                      <td id="8PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow9" onClick="editFencerInfo(9)">
+                      <td id="club9" class="FencerClub"></td>
+                      <td id="nm9" class="FencerNames"></td>
+                      <td id="yc9" class="yellowCards">0</td>
+                      <td id="rc9" class="redCards">0</td>
+                      <td id="bc9" class="blackCards">0</td>
+                      <th class="numHeader">9</th>
+                      <td id="c1r9" class="col1">0</td>
+                      <td id="c2r9" class="col2">0</td>
+                      <td id="c3r9" class="col3">0</td>
+                      <td id="c4r9" class="col4">0</td>
+                      <td id="c5r9" class="col5">0</td>
+                      <td id="c6r9" class="col6">0</td>
+                      <td id="c7r9" class="col7">0</td>
+                      <td id="c8r9" class="col8">0</td>
+                      <td id="c9r9" class="col9" style="background-color:Black"></td>
+                      <td id="c10r9" class="col10">0</td>
+                      <td id="c11r9" class="col11">0</td>
+                      <td id="c12r9" class="col12">0</td>
+                      <td id="9VIC" class="VIC">0</td>
+                      <td id="9TS" class="TS">0</td>
+                      <td id="9TR" class="TR">0</td>
+                      <td id="9IND" class="IND">0</td>
+                      <td id="9PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow10" onClick="editFencerInfo(10)">
+                      <td id="club10" class="FencerClub"></td>
+                      <td id="nm10" class="FencerNames"></td>
+                      <td id="yc10" class="yellowCards">0</td>
+                      <td id="rc10" class="redCards">0</td>
+                      <td id="bc10" class="blackCards">0</td>
+                      <th class="numHeader">10</th>
+                      <td id="c1r10" class="col1">0</td>
+                      <td id="c2r10" class="col2">0</td>
+                      <td id="c3r10" class="col3">0</td>
+                      <td id="c4r10" class="col4">0</td>
+                      <td id="c5r10" class="col5">0</td>
+                      <td id="c6r10" class="col6">0</td>
+                      <td id="c7r10" class="col7">0</td>
+                      <td id="c8r10" class="col8">0</td>
+                      <td id="c9r10" class="col9">0</td>
+                      <td id="c10r10" class="col10" style="background-color:Black"></td>
+                      <td id="c11r10" class="col11">0</td>
+                      <td id="c12r10" class="col12">0</td>
+                      <td id="10VIC" class="VIC">0</td>
+                      <td id="10TS" class="TS">0</td>
+                      <td id="10TR" class="TR">0</td>
+                      <td id="10IND" class="IND">0</td>
+                      <td id="10PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow11" onClick="editFencerInfo(11)">
+                      <td id="club11" class="FencerClub"></td>
+                      <td id="nm11" class="FencerNames"></td>
+                      <td id="yc11" class="yellowCards">0</td>
+                      <td id="rc11" class="redCards">0</td>
+                      <td id="bc11" class="blackCards">0</td>
+                      <th class="numHeader">11</th>
+                      <td id="c1r11" class="col1">0</td>
+                      <td id="c2r11" class="col2">0</td>
+                      <td id="c3r11" class="col3">0</td>
+                      <td id="c4r11" class="col4">0</td>
+                      <td id="c5r11" class="col5">0</td>
+                      <td id="c6r11" class="col6">0</td>
+                      <td id="c7r11" class="col7">0</td>
+                      <td id="c8r11" class="col8">0</td>
+                      <td id="c9r11" class="col9">0</td>
+                      <td id="c10r11" class="col10">0</td>
+                      <td id="c11r11" class="col11" style="background-color:Black"></td>
+                      <td id="c12r11" class="col12">0</td>
+                      <td id="11VIC" class="VIC">0</td>
+                      <td id="11TS" class="TS">0</td>
+                      <td id="11TR" class="TR">0</td>
+                      <td id="11IND" class="IND">0</td>
+                      <td id="11PLACE" class="PLACE"></td>
+                  </tr>
+                  <tr class="poolSheetTblRow" id="poolSheetTblrow12" onClick="editFencerInfo(12)">
+                      <td id="club12" class="FencerClub"></td>
+                      <td id="nm12" class="FencerNames"></td>
+                      <td id="yc12" class="yellowCards">0</td>
+                      <td id="rc12" class="redCards">0</td>
+                      <td id="bc12" class="blackCards">0</td>
+                      <th class="numHeader">12</th>
+                      <td id="c1r12" class="col1">0</td>
+                      <td id="c2r12" class="col2">0</td>
+                      <td id="c3r12" class="col3">0</td>
+                      <td id="c4r12" class="col4">0</td>
+                      <td id="c5r12" class="col5">0</td>
+                      <td id="c6r12" class="col6">0</td>
+                      <td id="c7r12" class="col7">0</td>
+                      <td id="c8r12" class="col8">0</td>
+                      <td id="c9r12" class="col9">0</td>
+                      <td id="c10r12" class="col10">0</td>
+                      <td id="c11r12" class="col11">0</td>
+                      <td id="c12r12" class="col12" style="background-color:Black"></td>
+                      <td id="12VIC" class="VIC">0</td>
+                      <td id="12TS" class="TS">0</td>
+                      <td id="12TR" class="TR">0</td>
+                      <td id="12IND" class="IND">0</td>
+                      <td id="12PLACE" class="PLACE"></td>
+                  </tr>
+                  -->
+              </table>
+          </div>
+          <br>
+          <br>
+		  <div id="curMatchControls">
+		    <div id="curMatchScoringDiv">
+			  <h2>Match Scoring</h2>
+			  <h3>Current Match</h3>
+			  <p id="matchTimer"></p>
+			  <table id="currentMatch" style="width: 80%">
+				  <tr>
+					  <th id="curMatchNum"></th>
+					  <th>Left Fencer</th>
+					  <th class="cmfnCol">#</th>
+					  <th>Right Fencer</th>
+					  <th class="cmfnCol">#</th>
+				  </tr>
+				  <tr>
+					  <th>Name</th>
+					  <td id="curFencerLName" style="text-align:center"></td>
+					  <td id="curFencerLNum" class="cmfnCol" style="text-align:center"></td>
+					  <td id="curFencerRName" style="text-align:center"></td>
+					  <td id="curFencerRNum" class="cmfnCol" style="text-align:center"></td>
+				  </tr>
+				  <tr>
+					  <th>Touches</th>
+					  <td id="curFencerLScore" colspan="2" style="border-right:none;text-align:center"></td>
+					  <td id="curFencerRScore" colspan="2" style="border-right:none;text-align:center"></td>
+				  </tr>
+				  <tr>
+					  <th>Points</th>
+					  <td colspan="2" style="text-align:center">
+						  <button id="addPointL" onclick="point('L', false, document.getElementById('scoreChangeAmountTxt').value)" style="margin: 5px;padding:10px">+</button>
+						  <button id="subPointL" onclick="point('L', true, document.getElementById('scoreChangeAmountTxt').value)" style="margin: 5px;padding:10px">-</button>
+					  </td>
+					  <td colspan="2" style="text-align:center">
+						  <button id="addPointR" onclick="point('R', false, document.getElementById('scoreChangeAmountTxt').value)" style="margin: 5px;padding:10px">+</button>
+						  <button id="subPointR" onclick="point('R', true, document.getElementById('scoreChangeAmountTxt').value)" style="margin: 5px;padding:10px">-</button>
+					  </td>
+				  </tr>
+				  <tr id="currentMatchDblRow">
+					  <th>Doubles</th>
+					  <td colspan="2" style="text-align:center">
+						  <button id="addDoublePoint" onclick="point('D', false, document.getElementById('scoreChangeAmountTxt').value)" style="margin: 5px;padding:10px">Add Double Touch</button>
+					  </td>
+					  <td colspan="2" style="text-align:center">
+						  <button id="subDoublePoint" onclick="point('D', true, document.getElementById('scoreChangeAmountTxt').value)" style="margin: 5px;padding:10px">Remove Double Touch</button>
+					  </td>
+				  </tr>
+				  <tr>
+					  <th>Score Amount</th>
+					  <td colspan="4" style="text-align:center">
+						  <label id="scoreChangeAmountLab" class="scoreChangeAmountInput">Score Change Amount: </label>
+						  <input id="scoreChangeAmountTxt" class="scoreChangeAmountInput" type="number" name="scoreChangeAmountTxt" min="1" max="100" value=1 style="margin: 5px;padding:10px">
+					  </td>
+				  </tr>
+			  </table>
+			</div>
+          <br>
+		    <div id="matchNavDiv">
+			  <table id="matchNavTbl" style="width: 80%">
+				  <tr class="matchNavTbl">
+					  <th class="matchNavBtnGrp" rowspan="2">
+						  <button id="matchNavPrev" class="matchNavBtn" onclick="navMatch('PREV')" style="margin: 5px;padding:10px">Previous Match</button>
+					  </th>
+					  <th id="matchNavCurNumLab" class="matchNavCurNum">Current Match</th>
+					  <th id="matchNavGTMNumInput" class="matchNavGTMNum" colspan="2">Go To Match #</th>
+					  <th class="matchNavBtnGrp" rowspan="2">
+						  <button id="matchNavNext" class="matchNavBtn" onclick="navMatch('NEXT')" style="margin: 5px;padding:10px">Next Match</button>
+					  </th>
+				  </tr>
+				  <tr class="matchNavTbl">
+					  <td id="matchNavCurNumDis" class="matchNavCurNum">1</td>
+					  <td id="matchNavGTMNumInput1" class="matchNavGTMNum1">
+						  <label id="matchNavGTMNumLab" class="matchNavGTMNumInput">Match #: </label>
+						  <input id="matchNavGTMNumTxt" class="matchNavGTMNumInput" type="number" name="matchNavGTMNumTxt" min="1" max="28" style="margin: 5px;padding:10px">
+					  </td>
+					  <td id="matchNavGTMNumAction" class="matchNavGTMNum1">
+						  <button id="matchNavGTMNumBtn" class="matchNavGTMNumAction" onclick="goToMatch()" style="margin: 5px;padding:10px">Go</button>
+					  </td>
+				  </tr>
+			  </table>
+			</div>
+		  </div>
+          <div id="NextMatchesDiv">
+              <h3>Next Matches</h3>
+              <table id="NextMatches" style="width: 80%">
+                  <tr>
+                      <th style="width: 20%"></th>
+                      <th style="text-align:center;width: 40%">Left Fencer</th>
+                      <th style="text-align:center;width: 40%">Right Fencer</th>
+                  </tr>
+                  <tr>
+                      <th style="width: 20%">On Deck</th>
+                      <td id="next1FencerLName" style="text-align:center;width: 40%"></td>
+                      <td id="next1FencerRName" style="text-align:center;width: 40%"></td>
+                  </tr>
+                  <tr>
+                      <th style="width: 20%">In the Hole</th>
+                      <td id="next2FencerLName" style="text-align:center;width: 40%"></td>
+                      <td id="next2FencerRName" style="text-align:center;width: 40%"></td>
+                  </tr>
+              </table>
+          </div>
+      </div>
+      <br>
+      <div id="matchLst">
+          <table id="matchLstTable" style="width: 80%">
+              <tr id="matchLstRHeader1">
+                  <th id="matchLstColHeader00" class="matchLstCol0" rowspan="2">Match #</th>
+                  <th id="matchLstColHeader01" colspan="3">Left Fencer</th>
+                  <th id="matchLstColHeader02" colspan="3">Right Fencer</th>
+                  <th id="matchLstColHeader03" class="matchLstCol7" rowspan="2">Double Touches</th>
+              </tr>
+              <tr id="matchLstRHeader2">
+                  <th id="matchLstColHeader11" class="matchLstCol1">#</th>
+                  <th id="matchLstColHeader12" class="matchLstCol2">Name</th>
+                  <th id="matchLstColHeader13" class="matchLstCol3">Score</th>
+                  <th id="matchLstColHeader14" class="matchLstCol4">#</th>
+                  <th id="matchLstColHeader15" class="matchLstCol5">Name</th>
+                  <th id="matchLstColHeader16" class="matchLstCol6">Score</th>
+              </tr>
+              <tr id="matchLstR1">
+                  <td id="mlR1C0" class="matchLstCol0">1</td>
+                  <td id="mlR1C1" class="matchLstCol1"></td>
+                  <td id="mlR1C2" class="matchLstCol2"></td>
+                  <td id="mlR1C3" class="matchLstCol3">0</td>
+                  <td id="mlR1C4" class="matchLstCol4"></td>
+                  <td id="mlR1C5" class="matchLstCol5"></td>
+                  <td id="mlR1C6" class="matchLstCol6">0</td>
+                  <td id="mlR1C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR2">
+                  <td id="mlR2C0" class="matchLstCol0">2</td>
+                  <td id="mlR2C1" class="matchLstCol1"></td>
+                  <td id="mlR2C2" class="matchLstCol2"></td>
+                  <td id="mlR2C3" class="matchLstCol3">0</td>
+                  <td id="mlR2C4" class="matchLstCol4"></td>
+                  <td id="mlR2C5" class="matchLstCol5"></td>
+                  <td id="mlR2C6" class="matchLstCol6">0</td>
+                  <td id="mlR2C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR3">
+                  <td id="mlR3C0" class="matchLstCol0">3</td>
+                  <td id="mlR3C1" class="matchLstCol1"></td>
+                  <td id="mlR3C2" class="matchLstCol2"></td>
+                  <td id="mlR3C3" class="matchLstCol3">0</td>
+                  <td id="mlR3C4" class="matchLstCol4"></td>
+                  <td id="mlR3C5" class="matchLstCol5"></td>
+                  <td id="mlR3C6" class="matchLstCol6">0</td>
+                  <td id="mlR3C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR4">
+                  <td id="mlR4C0" class="matchLstCol0">4</td>
+                  <td id="mlR4C1" class="matchLstCol1"></td>
+                  <td id="mlR4C2" class="matchLstCol2"></td>
+                  <td id="mlR4C3" class="matchLstCol3">0</td>
+                  <td id="mlR4C4" class="matchLstCol4"></td>
+                  <td id="mlR4C5" class="matchLstCol5"></td>
+                  <td id="mlR4C6" class="matchLstCol6">0</td>
+                  <td id="mlR4C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR5">
+                  <td id="mlR5C0" class="matchLstCol0">5</td>
+                  <td id="mlR5C1" class="matchLstCol1"></td>
+                  <td id="mlR5C2" class="matchLstCol2"></td>
+                  <td id="mlR5C3" class="matchLstCol3">0</td>
+                  <td id="mlR5C4" class="matchLstCol4"></td>
+                  <td id="mlR5C5" class="matchLstCol5"></td>
+                  <td id="mlR5C6" class="matchLstCol6">0</td>
+                  <td id="mlR5C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR6">
+                  <td id="mlR6C0" class="matchLstCol0">6</td>
+                  <td id="mlR6C1" class="matchLstCol1"></td>
+                  <td id="mlR6C2" class="matchLstCol2"></td>
+                  <td id="mlR6C3" class="matchLstCol3">0</td>
+                  <td id="mlR6C4" class="matchLstCol4"></td>
+                  <td id="mlR6C5" class="matchLstCol5"></td>
+                  <td id="mlR6C6" class="matchLstCol6">0</td>
+                  <td id="mlR6C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR7">
+                  <td id="mlR7C0" class="matchLstCol0">7</td>
+                  <td id="mlR7C1" class="matchLstCol1"></td>
+                  <td id="mlR7C2" class="matchLstCol2"></td>
+                  <td id="mlR7C3" class="matchLstCol3">0</td>
+                  <td id="mlR7C4" class="matchLstCol4"></td>
+                  <td id="mlR7C5" class="matchLstCol5"></td>
+                  <td id="mlR7C6" class="matchLstCol6">0</td>
+                  <td id="mlR7C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR8">
+                  <td id="mlR8C0" class="matchLstCol0">8</td>
+                  <td id="mlR8C1" class="matchLstCol1"></td>
+                  <td id="mlR8C2" class="matchLstCol2"></td>
+                  <td id="mlR8C3" class="matchLstCol3">0</td>
+                  <td id="mlR8C4" class="matchLstCol4"></td>
+                  <td id="mlR8C5" class="matchLstCol5"></td>
+                  <td id="mlR8C6" class="matchLstCol6">0</td>
+                  <td id="mlR8C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR9">
+                  <td id="mlR9C0" class="matchLstCol0">9</td>
+                  <td id="mlR9C1" class="matchLstCol1"></td>
+                  <td id="mlR9C2" class="matchLstCol2"></td>
+                  <td id="mlR9C3" class="matchLstCol3">0</td>
+                  <td id="mlR9C4" class="matchLstCol4"></td>
+                  <td id="mlR9C5" class="matchLstCol5"></td>
+                  <td id="mlR9C6" class="matchLstCol6">0</td>
+                  <td id="mlR9C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR10">
+                  <td id="mlR10C0" class="matchLstCol0">10</td>
+                  <td id="mlR10C1" class="matchLstCol1"></td>
+                  <td id="mlR10C2" class="matchLstCol2"></td>
+                  <td id="mlR10C3" class="matchLstCol3">0</td>
+                  <td id="mlR10C4" class="matchLstCol4"></td>
+                  <td id="mlR10C5" class="matchLstCol5"></td>
+                  <td id="mlR10C6" class="matchLstCol6">0</td>
+                  <td id="mlR10C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR11">
+                  <td id="mlR11C0" class="matchLstCol0">11</td>
+                  <td id="mlR11C1" class="matchLstCol1"></td>
+                  <td id="mlR11C2" class="matchLstCol2"></td>
+                  <td id="mlR11C3" class="matchLstCol3">0</td>
+                  <td id="mlR11C4" class="matchLstCol4"></td>
+                  <td id="mlR11C5" class="matchLstCol5"></td>
+                  <td id="mlR11C6" class="matchLstCol6">0</td>
+                  <td id="mlR11C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR12">
+                  <td id="mlR12C0" class="matchLstCol0">12</td>
+                  <td id="mlR12C1" class="matchLstCol1"></td>
+                  <td id="mlR12C2" class="matchLstCol2"></td>
+                  <td id="mlR12C3" class="matchLstCol3">0</td>
+                  <td id="mlR12C4" class="matchLstCol4"></td>
+                  <td id="mlR12C5" class="matchLstCol5"></td>
+                  <td id="mlR12C6" class="matchLstCol6">0</td>
+                  <td id="mlR12C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR13">
+                  <td id="mlR13C0" class="matchLstCol0">13</td>
+                  <td id="mlR13C1" class="matchLstCol1"></td>
+                  <td id="mlR13C2" class="matchLstCol2"></td>
+                  <td id="mlR13C3" class="matchLstCol3">0</td>
+                  <td id="mlR13C4" class="matchLstCol4"></td>
+                  <td id="mlR13C5" class="matchLstCol5"></td>
+                  <td id="mlR13C6" class="matchLstCol6">0</td>
+                  <td id="mlR13C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR14">
+                  <td id="mlR14C0" class="matchLstCol0">14</td>
+                  <td id="mlR14C1" class="matchLstCol1"></td>
+                  <td id="mlR14C2" class="matchLstCol2"></td>
+                  <td id="mlR14C3" class="matchLstCol3">0</td>
+                  <td id="mlR14C4" class="matchLstCol4"></td>
+                  <td id="mlR14C5" class="matchLstCol5"></td>
+                  <td id="mlR14C6" class="matchLstCol6">0</td>
+                  <td id="mlR14C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR15">
+                  <td id="mlR15C0" class="matchLstCol0">15</td>
+                  <td id="mlR15C1" class="matchLstCol1"></td>
+                  <td id="mlR15C2" class="matchLstCol2"></td>
+                  <td id="mlR15C3" class="matchLstCol3">0</td>
+                  <td id="mlR15C4" class="matchLstCol4"></td>
+                  <td id="mlR15C5" class="matchLstCol5"></td>
+                  <td id="mlR15C6" class="matchLstCol6">0</td>
+                  <td id="mlR15C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR16">
+                  <td id="mlR16C0" class="matchLstCol0">16</td>
+                  <td id="mlR16C1" class="matchLstCol1"></td>
+                  <td id="mlR16C2" class="matchLstCol2"></td>
+                  <td id="mlR16C3" class="matchLstCol3">0</td>
+                  <td id="mlR16C4" class="matchLstCol4"></td>
+                  <td id="mlR16C5" class="matchLstCol5"></td>
+                  <td id="mlR16C6" class="matchLstCol6">0</td>
+                  <td id="mlR16C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR17">
+                  <td id="mlR17C0" class="matchLstCol0">17</td>
+                  <td id="mlR17C1" class="matchLstCol1"></td>
+                  <td id="mlR17C2" class="matchLstCol2"></td>
+                  <td id="mlR17C3" class="matchLstCol3">0</td>
+                  <td id="mlR17C4" class="matchLstCol4"></td>
+                  <td id="mlR17C5" class="matchLstCol5"></td>
+                  <td id="mlR17C6" class="matchLstCol6">0</td>
+                  <td id="mlR17C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR18">
+                  <td id="mlR18C0" class="matchLstCol0">18</td>
+                  <td id="mlR18C1" class="matchLstCol1"></td>
+                  <td id="mlR18C2" class="matchLstCol2"></td>
+                  <td id="mlR18C3" class="matchLstCol3">0</td>
+                  <td id="mlR18C4" class="matchLstCol4"></td>
+                  <td id="mlR18C5" class="matchLstCol5"></td>
+                  <td id="mlR18C6" class="matchLstCol6">0</td>
+                  <td id="mlR18C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR19">
+                  <td id="mlR19C0" class="matchLstCol0">19</td>
+                  <td id="mlR19C1" class="matchLstCol1"></td>
+                  <td id="mlR19C2" class="matchLstCol2"></td>
+                  <td id="mlR19C3" class="matchLstCol3">0</td>
+                  <td id="mlR19C4" class="matchLstCol4"></td>
+                  <td id="mlR19C5" class="matchLstCol5"></td>
+                  <td id="mlR19C6" class="matchLstCol6">0</td>
+                  <td id="mlR19C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR20">
+                  <td id="mlR20C0" class="matchLstCol0">20</td>
+                  <td id="mlR20C1" class="matchLstCol1"></td>
+                  <td id="mlR20C2" class="matchLstCol2"></td>
+                  <td id="mlR20C3" class="matchLstCol3">0</td>
+                  <td id="mlR20C4" class="matchLstCol4"></td>
+                  <td id="mlR20C5" class="matchLstCol5"></td>
+                  <td id="mlR20C6" class="matchLstCol6">0</td>
+                  <td id="mlR20C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR21">
+                  <td id="mlR21C0" class="matchLstCol0">21</td>
+                  <td id="mlR21C1" class="matchLstCol1"></td>
+                  <td id="mlR21C2" class="matchLstCol2"></td>
+                  <td id="mlR21C3" class="matchLstCol3">0</td>
+                  <td id="mlR21C4" class="matchLstCol4"></td>
+                  <td id="mlR21C5" class="matchLstCol5"></td>
+                  <td id="mlR21C6" class="matchLstCol6">0</td>
+                  <td id="mlR21C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR22">
+                  <td id="mlR22C0" class="matchLstCol0">22</td>
+                  <td id="mlR22C1" class="matchLstCol1"></td>
+                  <td id="mlR22C2" class="matchLstCol2"></td>
+                  <td id="mlR22C3" class="matchLstCol3">0</td>
+                  <td id="mlR22C4" class="matchLstCol4"></td>
+                  <td id="mlR22C5" class="matchLstCol5"></td>
+                  <td id="mlR22C6" class="matchLstCol6">0</td>
+                  <td id="mlR22C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR23">
+                  <td id="mlR23C0" class="matchLstCol0">23</td>
+                  <td id="mlR23C1" class="matchLstCol1"></td>
+                  <td id="mlR23C2" class="matchLstCol2"></td>
+                  <td id="mlR23C3" class="matchLstCol3">0</td>
+                  <td id="mlR23C4" class="matchLstCol4"></td>
+                  <td id="mlR23C5" class="matchLstCol5"></td>
+                  <td id="mlR23C6" class="matchLstCol6">0</td>
+                  <td id="mlR23C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR24">
+                  <td id="mlR24C0" class="matchLstCol0">24</td>
+                  <td id="mlR24C1" class="matchLstCol1"></td>
+                  <td id="mlR24C2" class="matchLstCol2"></td>
+                  <td id="mlR24C3" class="matchLstCol3">0</td>
+                  <td id="mlR24C4" class="matchLstCol4"></td>
+                  <td id="mlR24C5" class="matchLstCol5"></td>
+                  <td id="mlR24C6" class="matchLstCol6">0</td>
+                  <td id="mlR24C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR25">
+                  <td id="mlR25C0" class="matchLstCol0">25</td>
+                  <td id="mlR25C1" class="matchLstCol1"></td>
+                  <td id="mlR25C2" class="matchLstCol2"></td>
+                  <td id="mlR25C3" class="matchLstCol3">0</td>
+                  <td id="mlR25C4" class="matchLstCol4"></td>
+                  <td id="mlR25C5" class="matchLstCol5"></td>
+                  <td id="mlR25C6" class="matchLstCol6">0</td>
+                  <td id="mlR25C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR26">
+                  <td id="mlR26C0" class="matchLstCol0">26</td>
+                  <td id="mlR26C1" class="matchLstCol1"></td>
+                  <td id="mlR26C2" class="matchLstCol2"></td>
+                  <td id="mlR26C3" class="matchLstCol3">0</td>
+                  <td id="mlR26C4" class="matchLstCol4"></td>
+                  <td id="mlR26C5" class="matchLstCol5"></td>
+                  <td id="mlR26C6" class="matchLstCol6">0</td>
+                  <td id="mlR26C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR27">
+                  <td id="mlR27C0" class="matchLstCol0">27</td>
+                  <td id="mlR27C1" class="matchLstCol1"></td>
+                  <td id="mlR27C2" class="matchLstCol2"></td>
+                  <td id="mlR27C3" class="matchLstCol3">0</td>
+                  <td id="mlR27C4" class="matchLstCol4"></td>
+                  <td id="mlR27C5" class="matchLstCol5"></td>
+                  <td id="mlR27C6" class="matchLstCol6">0</td>
+                  <td id="mlR27C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR28">
+                  <td id="mlR28C0" class="matchLstCol0">28</td>
+                  <td id="mlR28C1" class="matchLstCol1"></td>
+                  <td id="mlR28C2" class="matchLstCol2"></td>
+                  <td id="mlR28C3" class="matchLstCol3">0</td>
+                  <td id="mlR28C4" class="matchLstCol4"></td>
+                  <td id="mlR28C5" class="matchLstCol5"></td>
+                  <td id="mlR28C6" class="matchLstCol6">0</td>
+                  <td id="mlR28C7" class="matchLstCol7">0</td>
+              </tr>
+              <!--
+              <tr id="matchLstR29">
+                  <td id="mlR29C0" class="matchLstCol0">29</td>
+                  <td id="mlR29C1" class="matchLstCol1"></td>
+                  <td id="mlR29C2" class="matchLstCol2"></td>
+                  <td id="mlR29C3" class="matchLstCol3">0</td>
+                  <td id="mlR29C4" class="matchLstCol4"></td>
+                  <td id="mlR29C5" class="matchLstCol5"></td>
+                  <td id="mlR29C6" class="matchLstCol6">0</td>
+                  <td id="mlR29C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR30">
+                  <td id="mlR30C0" class="matchLstCol0">30</td>
+                  <td id="mlR30C1" class="matchLstCol1"></td>
+                  <td id="mlR30C2" class="matchLstCol2"></td>
+                  <td id="mlR30C3" class="matchLstCol3">0</td>
+                  <td id="mlR30C4" class="matchLstCol4"></td>
+                  <td id="mlR30C5" class="matchLstCol5"></td>
+                  <td id="mlR30C6" class="matchLstCol6">0</td>
+                  <td id="mlR30C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR31">
+                  <td id="mlR31C0" class="matchLstCol0">31</td>
+                  <td id="mlR31C1" class="matchLstCol1"></td>
+                  <td id="mlR31C2" class="matchLstCol2"></td>
+                  <td id="mlR31C3" class="matchLstCol3">0</td>
+                  <td id="mlR31C4" class="matchLstCol4"></td>
+                  <td id="mlR31C5" class="matchLstCol5"></td>
+                  <td id="mlR31C6" class="matchLstCol6">0</td>
+                  <td id="mlR31C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR32">
+                  <td id="mlR32C0" class="matchLstCol0">32</td>
+                  <td id="mlR32C1" class="matchLstCol1"></td>
+                  <td id="mlR32C2" class="matchLstCol2"></td>
+                  <td id="mlR32C3" class="matchLstCol3">0</td>
+                  <td id="mlR32C4" class="matchLstCol4"></td>
+                  <td id="mlR32C5" class="matchLstCol5"></td>
+                  <td id="mlR32C6" class="matchLstCol6">0</td>
+                  <td id="mlR32C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR33">
+                  <td id="mlR33C0" class="matchLstCol0">33</td>
+                  <td id="mlR33C1" class="matchLstCol1"></td>
+                  <td id="mlR33C2" class="matchLstCol2"></td>
+                  <td id="mlR33C3" class="matchLstCol3">0</td>
+                  <td id="mlR33C4" class="matchLstCol4"></td>
+                  <td id="mlR33C5" class="matchLstCol5"></td>
+                  <td id="mlR33C6" class="matchLstCol6">0</td>
+                  <td id="mlR33C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR34">
+                  <td id="mlR34C0" class="matchLstCol0">34</td>
+                  <td id="mlR34C1" class="matchLstCol1"></td>
+                  <td id="mlR34C2" class="matchLstCol2"></td>
+                  <td id="mlR34C3" class="matchLstCol3">0</td>
+                  <td id="mlR34C4" class="matchLstCol4"></td>
+                  <td id="mlR34C5" class="matchLstCol5"></td>
+                  <td id="mlR34C6" class="matchLstCol6">0</td>
+                  <td id="mlR34C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR35">
+                  <td id="mlR35C0" class="matchLstCol0">35</td>
+                  <td id="mlR35C1" class="matchLstCol1"></td>
+                  <td id="mlR35C2" class="matchLstCol2"></td>
+                  <td id="mlR35C3" class="matchLstCol3">0</td>
+                  <td id="mlR35C4" class="matchLstCol4"></td>
+                  <td id="mlR35C5" class="matchLstCol5"></td>
+                  <td id="mlR35C6" class="matchLstCol6">0</td>
+                  <td id="mlR35C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR36">
+                  <td id="mlR36C0" class="matchLstCol0">36</td>
+                  <td id="mlR36C1" class="matchLstCol1"></td>
+                  <td id="mlR36C2" class="matchLstCol2"></td>
+                  <td id="mlR36C3" class="matchLstCol3">0</td>
+                  <td id="mlR36C4" class="matchLstCol4"></td>
+                  <td id="mlR36C5" class="matchLstCol5"></td>
+                  <td id="mlR36C6" class="matchLstCol6">0</td>
+                  <td id="mlR36C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR37">
+                  <td id="mlR37C0" class="matchLstCol0">37</td>
+                  <td id="mlR37C1" class="matchLstCol1"></td>
+                  <td id="mlR37C2" class="matchLstCol2"></td>
+                  <td id="mlR37C3" class="matchLstCol3">0</td>
+                  <td id="mlR37C4" class="matchLstCol4"></td>
+                  <td id="mlR37C5" class="matchLstCol5"></td>
+                  <td id="mlR37C6" class="matchLstCol6">0</td>
+                  <td id="mlR37C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR38">
+                  <td id="mlR38C0" class="matchLstCol0">38</td>
+                  <td id="mlR38C1" class="matchLstCol1"></td>
+                  <td id="mlR38C2" class="matchLstCol2"></td>
+                  <td id="mlR38C3" class="matchLstCol3">0</td>
+                  <td id="mlR38C4" class="matchLstCol4"></td>
+                  <td id="mlR38C5" class="matchLstCol5"></td>
+                  <td id="mlR38C6" class="matchLstCol6">0</td>
+                  <td id="mlR38C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR39">
+                  <td id="mlR39C0" class="matchLstCol0">39</td>
+                  <td id="mlR39C1" class="matchLstCol1"></td>
+                  <td id="mlR39C2" class="matchLstCol2"></td>
+                  <td id="mlR39C3" class="matchLstCol3">0</td>
+                  <td id="mlR39C4" class="matchLstCol4"></td>
+                  <td id="mlR39C5" class="matchLstCol5"></td>
+                  <td id="mlR39C6" class="matchLstCol6">0</td>
+                  <td id="mlR39C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR40">
+                  <td id="mlR40C0" class="matchLstCol0">40</td>
+                  <td id="mlR40C1" class="matchLstCol1"></td>
+                  <td id="mlR40C2" class="matchLstCol2"></td>
+                  <td id="mlR40C3" class="matchLstCol3">0</td>
+                  <td id="mlR40C4" class="matchLstCol4"></td>
+                  <td id="mlR40C5" class="matchLstCol5"></td>
+                  <td id="mlR40C6" class="matchLstCol6">0</td>
+                  <td id="mlR40C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR41">
+                  <td id="mlR41C0" class="matchLstCol0">41</td>
+                  <td id="mlR41C1" class="matchLstCol1"></td>
+                  <td id="mlR41C2" class="matchLstCol2"></td>
+                  <td id="mlR41C3" class="matchLstCol3">0</td>
+                  <td id="mlR41C4" class="matchLstCol4"></td>
+                  <td id="mlR41C5" class="matchLstCol5"></td>
+                  <td id="mlR41C6" class="matchLstCol6">0</td>
+                  <td id="mlR41C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR42">
+                  <td id="mlR42C0" class="matchLstCol0">42</td>
+                  <td id="mlR42C1" class="matchLstCol1"></td>
+                  <td id="mlR42C2" class="matchLstCol2"></td>
+                  <td id="mlR42C3" class="matchLstCol3">0</td>
+                  <td id="mlR42C4" class="matchLstCol4"></td>
+                  <td id="mlR42C5" class="matchLstCol5"></td>
+                  <td id="mlR42C6" class="matchLstCol6">0</td>
+                  <td id="mlR42C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR43">
+                  <td id="mlR43C0" class="matchLstCol0">43</td>
+                  <td id="mlR43C1" class="matchLstCol1"></td>
+                  <td id="mlR43C2" class="matchLstCol2"></td>
+                  <td id="mlR43C3" class="matchLstCol3">0</td>
+                  <td id="mlR43C4" class="matchLstCol4"></td>
+                  <td id="mlR43C5" class="matchLstCol5"></td>
+                  <td id="mlR43C6" class="matchLstCol6">0</td>
+                  <td id="mlR43C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR44">
+                  <td id="mlR44C0" class="matchLstCol0">44</td>
+                  <td id="mlR44C1" class="matchLstCol1"></td>
+                  <td id="mlR44C2" class="matchLstCol2"></td>
+                  <td id="mlR44C3" class="matchLstCol3">0</td>
+                  <td id="mlR44C4" class="matchLstCol4"></td>
+                  <td id="mlR44C5" class="matchLstCol5"></td>
+                  <td id="mlR44C6" class="matchLstCol6">0</td>
+                  <td id="mlR44C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR45">
+                  <td id="mlR45C0" class="matchLstCol0">45</td>
+                  <td id="mlR45C1" class="matchLstCol1"></td>
+                  <td id="mlR45C2" class="matchLstCol2"></td>
+                  <td id="mlR45C3" class="matchLstCol3">0</td>
+                  <td id="mlR45C4" class="matchLstCol4"></td>
+                  <td id="mlR45C5" class="matchLstCol5"></td>
+                  <td id="mlR45C6" class="matchLstCol6">0</td>
+                  <td id="mlR45C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR46">
+                  <td id="mlR46C0" class="matchLstCol0">46</td>
+                  <td id="mlR46C1" class="matchLstCol1"></td>
+                  <td id="mlR46C2" class="matchLstCol2"></td>
+                  <td id="mlR46C3" class="matchLstCol3">0</td>
+                  <td id="mlR46C4" class="matchLstCol4"></td>
+                  <td id="mlR46C5" class="matchLstCol5"></td>
+                  <td id="mlR46C6" class="matchLstCol6">0</td>
+                  <td id="mlR46C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR47">
+                  <td id="mlR47C0" class="matchLstCol0">47</td>
+                  <td id="mlR47C1" class="matchLstCol1"></td>
+                  <td id="mlR47C2" class="matchLstCol2"></td>
+                  <td id="mlR47C3" class="matchLstCol3">0</td>
+                  <td id="mlR47C4" class="matchLstCol4"></td>
+                  <td id="mlR47C5" class="matchLstCol5"></td>
+                  <td id="mlR47C6" class="matchLstCol6">0</td>
+                  <td id="mlR47C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR48">
+                  <td id="mlR48C0" class="matchLstCol0">48</td>
+                  <td id="mlR48C1" class="matchLstCol1"></td>
+                  <td id="mlR48C2" class="matchLstCol2"></td>
+                  <td id="mlR48C3" class="matchLstCol3">0</td>
+                  <td id="mlR48C4" class="matchLstCol4"></td>
+                  <td id="mlR48C5" class="matchLstCol5"></td>
+                  <td id="mlR48C6" class="matchLstCol6">0</td>
+                  <td id="mlR48C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR49">
+                  <td id="mlR49C0" class="matchLstCol0">49</td>
+                  <td id="mlR49C1" class="matchLstCol1"></td>
+                  <td id="mlR49C2" class="matchLstCol2"></td>
+                  <td id="mlR49C3" class="matchLstCol3">0</td>
+                  <td id="mlR49C4" class="matchLstCol4"></td>
+                  <td id="mlR49C5" class="matchLstCol5"></td>
+                  <td id="mlR49C6" class="matchLstCol6">0</td>
+                  <td id="mlR49C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR50">
+                  <td id="mlR50C0" class="matchLstCol0">50</td>
+                  <td id="mlR50C1" class="matchLstCol1"></td>
+                  <td id="mlR50C2" class="matchLstCol2"></td>
+                  <td id="mlR50C3" class="matchLstCol3">0</td>
+                  <td id="mlR50C4" class="matchLstCol4"></td>
+                  <td id="mlR50C5" class="matchLstCol5"></td>
+                  <td id="mlR50C6" class="matchLstCol6">0</td>
+                  <td id="mlR50C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR51">
+                  <td id="mlR51C0" class="matchLstCol0">51</td>
+                  <td id="mlR51C1" class="matchLstCol1"></td>
+                  <td id="mlR51C2" class="matchLstCol2"></td>
+                  <td id="mlR51C3" class="matchLstCol3">0</td>
+                  <td id="mlR51C4" class="matchLstCol4"></td>
+                  <td id="mlR51C5" class="matchLstCol5"></td>
+                  <td id="mlR51C6" class="matchLstCol6">0</td>
+                  <td id="mlR51C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR52">
+                  <td id="mlR52C0" class="matchLstCol0">52</td>
+                  <td id="mlR52C1" class="matchLstCol1"></td>
+                  <td id="mlR52C2" class="matchLstCol2"></td>
+                  <td id="mlR52C3" class="matchLstCol3">0</td>
+                  <td id="mlR52C4" class="matchLstCol4"></td>
+                  <td id="mlR52C5" class="matchLstCol5"></td>
+                  <td id="mlR52C6" class="matchLstCol6">0</td>
+                  <td id="mlR52C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR53">
+                  <td id="mlR53C0" class="matchLstCol0">53</td>
+                  <td id="mlR53C1" class="matchLstCol1"></td>
+                  <td id="mlR53C2" class="matchLstCol2"></td>
+                  <td id="mlR53C3" class="matchLstCol3">0</td>
+                  <td id="mlR53C4" class="matchLstCol4"></td>
+                  <td id="mlR53C5" class="matchLstCol5"></td>
+                  <td id="mlR53C6" class="matchLstCol6">0</td>
+                  <td id="mlR53C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR54">
+                  <td id="mlR54C0" class="matchLstCol0">54</td>
+                  <td id="mlR54C1" class="matchLstCol1"></td>
+                  <td id="mlR54C2" class="matchLstCol2"></td>
+                  <td id="mlR54C3" class="matchLstCol3">0</td>
+                  <td id="mlR54C4" class="matchLstCol4"></td>
+                  <td id="mlR54C5" class="matchLstCol5"></td>
+                  <td id="mlR54C6" class="matchLstCol6">0</td>
+                  <td id="mlR54C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR55">
+                  <td id="mlR55C0" class="matchLstCol0">55</td>
+                  <td id="mlR55C1" class="matchLstCol1"></td>
+                  <td id="mlR55C2" class="matchLstCol2"></td>
+                  <td id="mlR55C3" class="matchLstCol3">0</td>
+                  <td id="mlR55C4" class="matchLstCol4"></td>
+                  <td id="mlR55C5" class="matchLstCol5"></td>
+                  <td id="mlR55C6" class="matchLstCol6">0</td>
+                  <td id="mlR55C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR56">
+                  <td id="mlR56C0" class="matchLstCol0">56</td>
+                  <td id="mlR56C1" class="matchLstCol1"></td>
+                  <td id="mlR56C2" class="matchLstCol2"></td>
+                  <td id="mlR56C3" class="matchLstCol3">0</td>
+                  <td id="mlR56C4" class="matchLstCol4"></td>
+                  <td id="mlR56C5" class="matchLstCol5"></td>
+                  <td id="mlR56C6" class="matchLstCol6">0</td>
+                  <td id="mlR56C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR57">
+                  <td id="mlR57C0" class="matchLstCol0">57</td>
+                  <td id="mlR57C1" class="matchLstCol1"></td>
+                  <td id="mlR57C2" class="matchLstCol2"></td>
+                  <td id="mlR57C3" class="matchLstCol3">0</td>
+                  <td id="mlR57C4" class="matchLstCol4"></td>
+                  <td id="mlR57C5" class="matchLstCol5"></td>
+                  <td id="mlR57C6" class="matchLstCol6">0</td>
+                  <td id="mlR57C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR58">
+                  <td id="mlR58C0" class="matchLstCol0">58</td>
+                  <td id="mlR58C1" class="matchLstCol1"></td>
+                  <td id="mlR58C2" class="matchLstCol2"></td>
+                  <td id="mlR58C3" class="matchLstCol3">0</td>
+                  <td id="mlR58C4" class="matchLstCol4"></td>
+                  <td id="mlR58C5" class="matchLstCol5"></td>
+                  <td id="mlR58C6" class="matchLstCol6">0</td>
+                  <td id="mlR58C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR59">
+                  <td id="mlR59C0" class="matchLstCol0">59</td>
+                  <td id="mlR59C1" class="matchLstCol1"></td>
+                  <td id="mlR59C2" class="matchLstCol2"></td>
+                  <td id="mlR59C3" class="matchLstCol3">0</td>
+                  <td id="mlR59C4" class="matchLstCol4"></td>
+                  <td id="mlR59C5" class="matchLstCol5"></td>
+                  <td id="mlR59C6" class="matchLstCol6">0</td>
+                  <td id="mlR59C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR60">
+                  <td id="mlR60C0" class="matchLstCol0">60</td>
+                  <td id="mlR60C1" class="matchLstCol1"></td>
+                  <td id="mlR60C2" class="matchLstCol2"></td>
+                  <td id="mlR60C3" class="matchLstCol3">0</td>
+                  <td id="mlR60C4" class="matchLstCol4"></td>
+                  <td id="mlR60C5" class="matchLstCol5"></td>
+                  <td id="mlR60C6" class="matchLstCol6">0</td>
+                  <td id="mlR60C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR61">
+                  <td id="mlR61C0" class="matchLstCol0">61</td>
+                  <td id="mlR61C1" class="matchLstCol1"></td>
+                  <td id="mlR61C2" class="matchLstCol2"></td>
+                  <td id="mlR61C3" class="matchLstCol3">0</td>
+                  <td id="mlR61C4" class="matchLstCol4"></td>
+                  <td id="mlR61C5" class="matchLstCol5"></td>
+                  <td id="mlR61C6" class="matchLstCol6">0</td>
+                  <td id="mlR61C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR62">
+                  <td id="mlR62C0" class="matchLstCol0">62</td>
+                  <td id="mlR62C1" class="matchLstCol1"></td>
+                  <td id="mlR62C2" class="matchLstCol2"></td>
+                  <td id="mlR62C3" class="matchLstCol3">0</td>
+                  <td id="mlR62C4" class="matchLstCol4"></td>
+                  <td id="mlR62C5" class="matchLstCol5"></td>
+                  <td id="mlR62C6" class="matchLstCol6">0</td>
+                  <td id="mlR62C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR63">
+                  <td id="mlR63C0" class="matchLstCol0">63</td>
+                  <td id="mlR63C1" class="matchLstCol1"></td>
+                  <td id="mlR63C2" class="matchLstCol2"></td>
+                  <td id="mlR63C3" class="matchLstCol3">0</td>
+                  <td id="mlR63C4" class="matchLstCol4"></td>
+                  <td id="mlR63C5" class="matchLstCol5"></td>
+                  <td id="mlR63C6" class="matchLstCol6">0</td>
+                  <td id="mlR63C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR64">
+                  <td id="mlR64C0" class="matchLstCol0">64</td>
+                  <td id="mlR64C1" class="matchLstCol1"></td>
+                  <td id="mlR64C2" class="matchLstCol2"></td>
+                  <td id="mlR64C3" class="matchLstCol3">0</td>
+                  <td id="mlR64C4" class="matchLstCol4"></td>
+                  <td id="mlR64C5" class="matchLstCol5"></td>
+                  <td id="mlR64C6" class="matchLstCol6">0</td>
+                  <td id="mlR64C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR65">
+                  <td id="mlR65C0" class="matchLstCol0">65</td>
+                  <td id="mlR65C1" class="matchLstCol1"></td>
+                  <td id="mlR65C2" class="matchLstCol2"></td>
+                  <td id="mlR65C3" class="matchLstCol3">0</td>
+                  <td id="mlR65C4" class="matchLstCol4"></td>
+                  <td id="mlR65C5" class="matchLstCol5"></td>
+                  <td id="mlR65C6" class="matchLstCol6">0</td>
+                  <td id="mlR65C7" class="matchLstCol7">0</td>
+              </tr>
+              <tr id="matchLstR66">
+                  <td id="mlR66C0" class="matchLstCol0">66</td>
+                  <td id="mlR66C1" class="matchLstCol1"></td>
+                  <td id="mlR66C2" class="matchLstCol2"></td>
+                  <td id="mlR66C3" class="matchLstCol3">0</td>
+                  <td id="mlR66C4" class="matchLstCol4"></td>
+                  <td id="mlR66C5" class="matchLstCol5"></td>
+                  <td id="mlR66C6" class="matchLstCol6">0</td>
+                  <td id="mlR66C7" class="matchLstCol7">0</td>
+              </tr>
+              -->
+          </table>
+      </div>
+    </div>
+    
+    
+    <div id="fencerInfoFormDiv">
+      <p id="fifNumber" style="display:none;"></p>
+      <p id="fifHeadTxt"><b>Fencer # 1 Information:</b></p>
+      <label id="fifNameLab">Name of Fencer: </label>
+      <input type="text" id="fifName" name="fifName"><br>
+      <label id="fifClubLab">Club: </label>
+      <input type="text" id="fifClub" name="fifClub"><br>
+      <div id="fifInfoFormCards">
+        <p>Penalty Cards:</p>
+        <label id="fifycLab">Yellow Cards:</label>
+        <input type="number" id="fifyc" name="fifyc" min="0" max="100" value=0><br>
+        <label id="fifrcLab">Red Cards:</label>
+        <input type="number" id="fifrc" name="fifrc" min="0" max="100" value=0><br>
+        <label id="fifbcLab">Black Cards:</label>
+        <input type="number" id="fifbc" name="fifbc" min="0" max="100" value=0><br>
+      </div>
+      <button id="fifCancelBtn" class="fifBtn" onclick="NavFencerInfo('C')">Cancel</button>
+      <button id="fifSubmitBtn" class="fifBtn" onclick="NavFencerInfo('S')">Submit</button>
+    </div>
+    
+    
+    </div><!-- MainDiv END -->
+    <?!= include('JavaScript'); ?>
+  </body>
+</html>
+
+
